@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterMajorasMaskInstaller", "BetterMajorasMaskInstaller\BetterMajorasMaskInstaller.csproj", "{69C25E31-E0D9-438D-BCAF-7620996C2409}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZipSharp", "SevenZipSharp\SevenZipSharp.csproj", "{0E37F351-0392-4522-951A-508BE1E52583}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E37F351-0392-4522-951A-508BE1E52583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E37F351-0392-4522-951A-508BE1E52583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E37F351-0392-4522-951A-508BE1E52583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E37F351-0392-4522-951A-508BE1E52583}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {897F34D9-D457-47D4-A64F-E8F7EC9ED605}
+	EndGlobalSection
+EndGlobal

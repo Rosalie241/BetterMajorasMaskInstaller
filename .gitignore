@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # let's not publish our API key :)
-BetterMajorasMaskInstaller/GoogleApiInformation.cs
+GoogleApiInformation.cs
 
 # User-specific files
 *.rsuser

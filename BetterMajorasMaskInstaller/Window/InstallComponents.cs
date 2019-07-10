@@ -11,7 +11,7 @@ namespace BetterMajorasMaskInstaller.Window
             InitializeComponent();
         }
 
-        public DownloadComponents DownloadComponents { get; set; }
+        public InstallerComponents DownloadComponents { get; set; }
 
         private void InstallComponents_Load(object sender, EventArgs e)
         {

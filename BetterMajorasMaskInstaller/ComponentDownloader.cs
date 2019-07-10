@@ -49,7 +49,7 @@ namespace BetterMajorasMaskInstaller
         }
 
         public int ComponentDownloadIndex { get; set; }
-        public DownloadComponent CurrentComponent { get; set; }
+        public InstallerComponent CurrentComponent { get; set; }
         private bool VerifyFileSize(string fileName, int? bytesLength)
         {
             if (bytesLength == null)
@@ -66,7 +66,7 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Downloads DownloadComponent in directory
         /// </summary>
-        public void DownloadComponent(DownloadComponent component, string directory)
+        public void DownloadComponent(InstallerComponent component, string directory)
         {
             ComponentDownloadIndex = -1;
             CurrentComponent = component;

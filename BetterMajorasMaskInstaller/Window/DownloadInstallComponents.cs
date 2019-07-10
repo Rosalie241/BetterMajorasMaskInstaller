@@ -59,7 +59,7 @@ namespace BetterMajorasMaskInstaller.Window
             progressBar1.Value = value;
         }
         private ComponentDownloader Downloader { get; set; }
-        private DownloadComponents DownloadComponents = new DownloadComponents();
+        private InstallerComponents InstallerComponents = new InstallerComponents();
 
         private void DownloadAllComponents()
         {
@@ -80,7 +80,7 @@ namespace BetterMajorasMaskInstaller.Window
             try
             {
                 Log("Downloading Installer Configuration...");
-                DownloadComponents = JsonConvert.DeserializeObject<DownloadComponents>(
+                InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
                                                 new WebClient().DownloadString(configUrl));
             }
             catch (Exception e)
@@ -108,7 +108,7 @@ namespace BetterMajorasMaskInstaller.Window
                 }
             }
 
-            foreach (DownloadComponent component in DownloadComponents.Components)
+            foreach (InstallerComponent component in InstallerComponents.Components)
             {
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
@@ -149,7 +149,7 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new InstallComponents() { DownloadComponents = DownloadComponents,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new InstallComponents() { DownloadComponents = InstallerComponents,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Log(string text)
         {   

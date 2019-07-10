@@ -2,7 +2,7 @@
 
 namespace BetterMajorasMaskInstaller
 {
-    public class DownloadComponent
+    public class InstallerComponent
     {
         /// <summary>
         /// Name

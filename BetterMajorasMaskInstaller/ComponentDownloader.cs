@@ -34,6 +34,7 @@ namespace BetterMajorasMaskInstaller
         public Exception Exception { get; set; }
         public ComponentDownloader()
         {
+            // create WebClient and disable cache
             Client = new WebClient
             {
                 CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore)
@@ -128,6 +129,7 @@ namespace BetterMajorasMaskInstaller
         public void Dispose()
         {
             Client = null;
+            Exception = null;
             OnDownloadProgressChanged = null;
             GC.SuppressFinalize(this);
         }

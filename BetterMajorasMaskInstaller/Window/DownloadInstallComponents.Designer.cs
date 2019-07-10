@@ -48,7 +48,6 @@
             this.LogBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.LogBox.Size = new System.Drawing.Size(420, 300);
             this.LogBox.TabIndex = 1;
-            this.LogBox.TextChanged += new System.EventHandler(this.LogBox_TextChanged);
             // 
             // DownloadInstallComponents
             // 
@@ -59,10 +58,9 @@
             this.Controls.Add(this.progressBar1);
             this.Name = "DownloadInstallComponents";
             this.Text = "DownloadInstallComponents";
-            this.Load += new System.EventHandler(this.DownloadInstallComponents_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DownloadInstallComponents_Closing);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

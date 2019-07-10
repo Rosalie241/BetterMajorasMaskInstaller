@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BetterMajorasMaskInstaller.Window
@@ -27,5 +21,6 @@ namespace BetterMajorasMaskInstaller.Window
             this.Hide();
             new SelectInstallComponents() { StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
+        private void LicenseAgreement_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }
 }

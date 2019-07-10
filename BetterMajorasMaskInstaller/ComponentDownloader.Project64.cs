@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace BetterMajorasMaskInstaller
 {
@@ -42,11 +37,21 @@ namespace BetterMajorasMaskInstaller
 
         public void Project64(string fileName)
         {
-            string url = GetLatestNightlyUrl();
-            Client.DownloadFileAsync(new System.Uri(url), fileName);
+            try
+            {
+                string url = GetLatestNightlyUrl();
+                Client.DownloadFileAsync(new System.Uri(url), fileName);
 
-            while (Client.IsBusy)
-                Thread.Yield();
+                while (Client.IsBusy)
+                    Thread.Yield();
+
+                Failed = false;
+            }
+            catch(Exception e)
+            {
+                Exception = e;
+                Failed = true;
+            }
         }
     }
 }

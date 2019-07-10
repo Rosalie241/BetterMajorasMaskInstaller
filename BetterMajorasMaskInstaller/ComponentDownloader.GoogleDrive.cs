@@ -1,22 +1,20 @@
 ﻿using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-//using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BetterMajorasMaskInstaller
 {
     partial class ComponentDownloader
     {
-        public bool IsGoogleDriveUrl(string url) => url.Contains("gdrive:");
+        /// <summary>
+        /// Checks whether URL is a Google Drive URL (using the 'special' format)
+        /// </summary>
+        public bool IsGoogleDriveUrl(string url) => url.StartsWith("gdrive:");
 
+        /// <summary>
+        /// Downloads file(from URL) using the Google Drive API
+        /// </summary>
         public void DownloadGoogleDriveFile(string url, string fileName)
         {
             string driveId = url.Split(':')[1];
@@ -37,22 +35,22 @@ namespace BetterMajorasMaskInstaller
                             case DownloadStatus.Downloading:
                                 OnDownloadProgressChanged(this, new DownloadStatusChangedEventArgs(progress.BytesDownloaded, 0));
                                 fileStream.Flush();
-                                Failed = false;
                                 break;
 
                             case DownloadStatus.Failed:
-                                File.WriteAllText("exception.txt", progress.Exception.Message);
+                                Exception = progress.Exception;
                                 Failed = true;
                                 return;
 
                             case DownloadStatus.Completed:
+                                fileStream.Close();
+                                Failed = false;
                                 break;
                         }
 
                     };
 
                     request.Download(fileStream);
-                    fileStream.Close();
                 }
             }
         }

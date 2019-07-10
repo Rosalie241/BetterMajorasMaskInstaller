@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -40,10 +34,10 @@ namespace BetterMajorasMaskInstaller.Window
                 // ignore
             }
 
-            if(fileSize == null)
+            if (fileSize == null)
                 ChangeProgressBarValue(a.ProgressPercentage);
             else
-                ChangeProgressBarValue((int)(a.BytesReceived / 1024 / 1024), (int)(fileSize / 1024 / 1024));
+                ChangeProgressBarValue((int)a.BytesReceived, (int)fileSize);
            
         }
 
@@ -65,7 +59,7 @@ namespace BetterMajorasMaskInstaller.Window
             progressBar1.Value = value;
         }
         private ComponentDownloader Downloader { get; set; }
-        private DownloadComponents dc = new DownloadComponents();
+        private DownloadComponents DownloadComponents = new DownloadComponents();
 
         private void DownloadAllComponents()
         {
@@ -79,92 +73,65 @@ namespace BetterMajorasMaskInstaller.Window
             Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
             Downloader.RegisterEvents();
 
+            string configUrl = "https://raw.githubusercontent.com/tim241/BetterMajorasMaskInstaller-cfg/master/config.json";
+
+            // Download the Installer Configuration
+            // and parse it
+            try
+            {
+                Log("Downloading Installer Configuration...");
+                DownloadComponents = JsonConvert.DeserializeObject<DownloadComponents>(
+                                                new WebClient().DownloadString(configUrl));
+            }
+            catch (Exception e)
+            {
+                Log("Downloading Installer Configuration Failed");
+                Log(e.Message);
+                Log(e.StackTrace);
+                return;
+            }
+
             string project64FileName = Path.Combine(downloadPath, "Project64.zip");
-
-
-            dc.Components = new List<DownloadComponent>();
-            dc.Components.Add(new DownloadComponent
-            {
-                Name = "Azimer's Audio Plugin",
-                Urls = new Dictionary<string, string>()
-                {
-                    { "https://github.com/Azimer/AziAudio/files/1591596/AziAudio.v0.70.WIP10.zip", "AziAudio.zip" }
-                },
-                FileSizes = new int?[]
-                {
-                    96221
-                },
-                Files = new Dictionary<string, string>()
-                {
-                    { "AziAudio v0.70 WIP10.dll", @"Plugin\Audio\AziAudio v0.70 WIP10.dll" }
-                }
-            });
-            dc.Components.Add(new DownloadComponent
-            {
-                Name = "GlideN64 GFX Plugin",
-                Urls = new Dictionary<string, string>()
-                {
-                    { "gdrive:14fgffHHxnnNULRwf4c-4pY1scV6SOITc",
-                        "GLideN64.7z" }
-                },
-                FileSizes = new int?[]
-                {
-                    5003466
-                },
-                Files = new Dictionary<string, string>()
-                {
-                    { @"GLideN64\Zilmar-specs\GLideN64.dll", @"Plugin\GFX\GLideN64.dll" },
-                    { @"GLideN64\Zilmar-specs\GLideN64.custom.ini", @"Plugin\GFX\GLideN64.custom.ini" }
-                }
-            });
-            dc.Components.Add(new DownloadComponent
-            {
-                Name = "MM HD Texture Pack",
-                Urls = new Dictionary<string, string>()
-                {
-                    { "gdrive:1B_XetHFdS-Nx15rvzhxfVep81aSFJ0bJ",
-                        "mmhd.zip.001" },
-                    { "gdrive:103P0snXU3j1kmNMA0gELc2BkEL3Mq7sA",
-                        "mmhd.zip.002" },
-                    { "gdrive:1rBCOYsZnuqVIDoQk1TOjWfd6Zy0itcxB",
-                        "mmhd.zip.003" }
-                },
-                FileSizes = new int?[]
-                {
-                    943718400,
-                    943718400,
-                    609021060
-                },
-                Files = new Dictionary<string, string>()
-                {
-                    { "ZELDA MAJORA'S MASK_HIRESTEXTURES.htc", @"Plugin\GFX\cache\ZELDA MAJORA'S MASK_HIRESTEXTURES.htc" }
-                }
-            });
-
-            File.WriteAllText(downloadPath + @"\" + "config.json", JsonConvert.SerializeObject(dc));
-
+            
+            // we *sadly* need to do something special for Project64
             if (!File.Exists(project64FileName))
             {
                 ChangeProgressBarValue(0);
                 Log("Downloading Project64...");
                 Downloader.Project64(project64FileName);
+
+                if(Downloader.Failed)
+                {
+                    Log("Downloading Project64 Failed");
+                    Log(Downloader.Exception.Message);
+                    Log(Downloader.Exception.StackTrace);                    
+                }
             }
 
-            foreach (DownloadComponent component in dc.Components)
+            foreach (DownloadComponent component in DownloadComponents.Components)
             {
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
                 Downloader.DownloadComponent(component, downloadPath);
-                    
+                
                 if (Downloader.Failed)
                 {
                     Log($"Downloading {component.Name} Failed");
+
+                    // log Exception aswell, if it exists
+                    if (Downloader.Exception != null)
+                    {
+                        Log(Downloader.Exception.Message);
+                        Log(Downloader.Exception.StackTrace);
+                    }
+
                     return;
                 }
             }
 
             Log("Downloading completed");
 
+            return;
             /*
             using(WebClient client = new WebClient())
             {
@@ -182,7 +149,7 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new InstallComponents() { DownloadComponents = dc,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new InstallComponents() { DownloadComponents = DownloadComponents,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Log(string text)
         {   
@@ -191,14 +158,6 @@ namespace BetterMajorasMaskInstaller.Window
             else
                 LogBox.Text += text + Environment.NewLine;
         }
-        private void DownloadInstallComponents_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void LogBox_TextChanged(object sender, EventArgs e)
-        {
-                    
-        }
+        private void DownloadInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }
 }

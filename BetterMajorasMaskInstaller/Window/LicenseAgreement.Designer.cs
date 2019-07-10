@@ -81,6 +81,7 @@
             this.Name = "LicenseAgreement";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LicenseAgreement";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LicenseAgreement_Closing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

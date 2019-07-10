@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace BetterMajorasMaskInstaller
 {
@@ -31,9 +28,16 @@ namespace BetterMajorasMaskInstaller
         /// whether the download failed
         /// </summary>
         public bool Failed { get; set; }
+        /// <summary>
+        /// When Failed, the exception will be here
+        /// </summary>
+        public Exception Exception { get; set; }
         public ComponentDownloader()
         {
-            Client = new WebClient();
+            Client = new WebClient
+            {
+                CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore)
+            };
         }
 
         public void RegisterEvents()
@@ -46,8 +50,11 @@ namespace BetterMajorasMaskInstaller
 
         public int ComponentDownloadIndex { get; set; }
         public DownloadComponent CurrentComponent { get; set; }
-        private bool VerifyFileSize(string fileName, int bytesLength)
+        private bool VerifyFileSize(string fileName, int? bytesLength)
         {
+            if (bytesLength == null)
+                return true;
+
             using(FileStream fileStream = new FileStream(fileName, FileMode.Open))
             {
                 if (fileStream.Length == bytesLength)
@@ -56,11 +63,15 @@ namespace BetterMajorasMaskInstaller
 
             return false;
         }
+        /// <summary>
+        /// Downloads DownloadComponent in directory
+        /// </summary>
         public void DownloadComponent(DownloadComponent component, string directory)
         {
             ComponentDownloadIndex = -1;
             CurrentComponent = component;
 
+            // loop over each URL and download it
             foreach (KeyValuePair<string, string> urlInfo in component.Urls)
             {
                 ComponentDownloadIndex++;
@@ -69,39 +80,47 @@ namespace BetterMajorasMaskInstaller
                 string file = Path.Combine(directory, urlInfo.Value);
                 int? length = 0;
 
-                if (File.Exists(file))
-                {
-                    if (CurrentComponent.FileSizes == null)
-                        continue;
-
+                if(CurrentComponent.FileSizes != null)
                     length = CurrentComponent.FileSizes[ComponentDownloadIndex];
 
-                    if (length == null)
-                        continue;
-
-                    if (VerifyFileSize(file, (int)length))
+                // if the file exists
+                // make sure the size is the same as the specified size
+                // if so, skip this item
+                if (File.Exists(file))
+                {
+                    if (VerifyFileSize(file, length))
                         continue;
                 }
 
+                // if the URL is a Google Drive URL,
+                // download it using the Google API
+                // and return
                 if (IsGoogleDriveUrl(url))
                 {
                     DownloadGoogleDriveFile(url, file);
+                    return;
                 }
-                else
+
+                // try to download the file using WebClient
+                // also verify the size when it's done.
+                // since we also want the events to work
+                // we'll download it async
+                // and wait for the WebClient to be done
+                try
                 {
-                    try
-                    {
-                        Client.DownloadFileAsync(new Uri(url), file);
+                    Client.DownloadFileAsync(new Uri(url), file);
 
-                        while (Client.IsBusy)
-                            Thread.Sleep(10);
+                    // we use Thread.Sleep here because
+                    // Thread.Yield has high cpu usage
+                    while (Client.IsBusy)
+                        Thread.Sleep(10);
 
-                        Failed = VerifyFileSize(file, (int)length);
-                    }
-                    catch(Exception)
-                    {
-                        Failed = true;
-                    }
+                    Failed = !VerifyFileSize(file, length);
+                }
+                catch (Exception e)
+                {
+                    Exception = e;
+                    Failed = true;
                 }
 
             }

@@ -131,14 +131,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             Log("Downloading completed");
 
-            return;
-            /*
-            using(WebClient client = new WebClient())
-            {
-                Log(client.DownloadString("https://drive.google.com/uc?id=1B_XetHFdS-Nx15rvzhxfVep81aSFJ0bJ&export=download"));
-            }
-            */
-           // LaunchInstallComponents();
+            LaunchInstallComponents();
         }
         private void LaunchInstallComponents()
         {
@@ -149,7 +142,7 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new InstallComponents() { DownloadComponents = InstallerComponents,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new InstallComponents() { Components = InstallerComponents,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Log(string text)
         {   

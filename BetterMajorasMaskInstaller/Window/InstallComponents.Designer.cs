@@ -28,31 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.InstallProgressBar = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
-            // progressBar1
+            // InstallProgressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 326);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(560, 23);
-            this.progressBar1.TabIndex = 0;
+            this.InstallProgressBar.Location = new System.Drawing.Point(12, 326);
+            this.InstallProgressBar.Name = "InstallProgressBar";
+            this.InstallProgressBar.Size = new System.Drawing.Size(560, 23);
+            this.InstallProgressBar.TabIndex = 0;
             // 
             // InstallComponents
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 361);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.InstallProgressBar);
             this.Name = "InstallComponents";
             this.Text = "InstallComponents";
             this.Load += new System.EventHandler(this.InstallComponents_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InstallComponents_Closing);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar InstallProgressBar;
     }
 }

@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterMajorasMaskInstaller", "BetterMajorasMaskInstaller\BetterMajorasMaskInstaller.csproj", "{69C25E31-E0D9-438D-BCAF-7620996C2409}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZipSharp", "SevenZipSharp\SevenZipSharp.csproj", "{0E37F351-0392-4522-951A-508BE1E52583}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SevenZipSharp", "SevenZipSharp\SevenZipSharp.csproj", "{106965AA-F96F-4913-A675-AA4AB541D28E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C25E31-E0D9-438D-BCAF-7620996C2409}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E37F351-0392-4522-951A-508BE1E52583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E37F351-0392-4522-951A-508BE1E52583}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E37F351-0392-4522-951A-508BE1E52583}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E37F351-0392-4522-951A-508BE1E52583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{106965AA-F96F-4913-A675-AA4AB541D28E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{106965AA-F96F-4913-A675-AA4AB541D28E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{106965AA-F96F-4913-A675-AA4AB541D28E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{106965AA-F96F-4913-A675-AA4AB541D28E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

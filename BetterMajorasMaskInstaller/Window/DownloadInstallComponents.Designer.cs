@@ -56,11 +56,14 @@
             this.ClientSize = new System.Drawing.Size(584, 361);
             this.Controls.Add(this.LogBox);
             this.Controls.Add(this.progressBar1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "DownloadInstallComponents";
             this.Text = "DownloadInstallComponents";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DownloadInstallComponents_Closing);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

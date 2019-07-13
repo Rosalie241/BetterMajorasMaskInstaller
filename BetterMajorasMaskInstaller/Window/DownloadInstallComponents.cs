@@ -123,7 +123,6 @@ namespace BetterMajorasMaskInstaller.Window
                         Log(Downloader.Exception.Message);
                         Log(Downloader.Exception.StackTrace);
                     }
-                    
                     return;
                 }
             }

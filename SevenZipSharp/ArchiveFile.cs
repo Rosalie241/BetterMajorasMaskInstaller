@@ -31,9 +31,6 @@ namespace SevenZipSharp
 
             if (!File.Exists(ArchiveFileName))
                 throw new InvalidDataException("Archive doesn't exist!");
-
-            if (!IsValidArchive())
-                throw new InvalidDataException("Invalid Archive!");
         }
         /// <summary>
         /// Process OutputDataReceived event handler
@@ -102,7 +99,10 @@ namespace SevenZipSharp
         {
             return StartProcess($"x -y -bsp1 -o\"{outputDirectory}\" \"{ArchiveFileName}\"");
         }
-        private bool IsValidArchive()
+        /// <summary>
+        /// Checks whether archive is valid
+        /// </summary>
+        public bool IsValidArchive()
         {
             return StartProcess($"t \"{ArchiveFileName}\"");
         }

@@ -58,6 +58,7 @@
             this.Controls.Add(this.InstallProgressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "InstallComponents";
             this.Text = "InstallComponents";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InstallComponents_Closing);

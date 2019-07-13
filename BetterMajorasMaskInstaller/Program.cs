@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace BetterMajorasMaskInstaller
@@ -13,7 +16,7 @@ namespace BetterMajorasMaskInstaller
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Window.Welcome());
+            Application.Run(new Window.Welcome()); 
         }
     }
 }

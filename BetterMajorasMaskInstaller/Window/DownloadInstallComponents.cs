@@ -25,8 +25,8 @@ namespace BetterMajorasMaskInstaller.Window
             // TODO
             try
             {
-                if (Downloader.CurrentComponent.FileSizes != null)
-                    fileSize = Downloader.CurrentComponent.FileSizes[Downloader.ComponentDownloadIndex];
+                if (Downloader.CurrentComponent.Urls != null)
+                    fileSize = Downloader.CurrentComponent.Urls[Downloader.ComponentDownloadIndex].FileSize;
 
             }
             catch(Exception)
@@ -71,7 +71,6 @@ namespace BetterMajorasMaskInstaller.Window
 
             Downloader = new ComponentDownloader();
             Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
-            Downloader.RegisterEvents();
 
             string configUrl = "https://raw.githubusercontent.com/tim241/BetterMajorasMaskInstaller-cfg/master/config.json";
 
@@ -124,7 +123,7 @@ namespace BetterMajorasMaskInstaller.Window
                         Log(Downloader.Exception.Message);
                         Log(Downloader.Exception.StackTrace);
                     }
-
+                    
                     return;
                 }
             }
@@ -142,7 +141,7 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new InstallComponents() { Components = InstallerComponents,  StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new InstallComponents() { Components = InstallerComponents, StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Log(string text)
         {   

@@ -36,7 +36,10 @@ namespace BetterMajorasMaskInstaller.Window
         }
         private void Install()
         {
-            string path = @"C:\Users\Tim\AppData\Local\BetterMajorasMaskInstaller";
+            string path = Path.Combine(
+                 Environment.GetEnvironmentVariable("LOCALAPPDATA"),
+                "BetterMajorasMaskInstaller");
+
             string project64File = Path.Combine(path, "Project64.zip");
 
             // TODO, make this flexible
@@ -48,7 +51,7 @@ namespace BetterMajorasMaskInstaller.Window
                 Directory.CreateDirectory(project64Path);
 
 
-            using(ArchiveFile archive = new ArchiveFile(project64File))
+            using (ArchiveFile archive = new ArchiveFile(project64File))
             {
                 archive.OnProgressChange += (object source, int value) =>
                 {
@@ -57,9 +60,9 @@ namespace BetterMajorasMaskInstaller.Window
                 archive.ExtractAll(project64Path);
             }
 
-            foreach(InstallerComponent component in Components.Components)
+            foreach (InstallerComponent component in Components.Components)
             {
-                string archiveFile = Path.Combine(path, component.Urls.First().Value);
+                string archiveFile = Path.Combine(path, component.Urls.First().FileName);
                 using (ArchiveFile archive = new ArchiveFile(archiveFile))
                 {
                     foreach (KeyValuePair<string, string> extractFileInfo in component.Files)

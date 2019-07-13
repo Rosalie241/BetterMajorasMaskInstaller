@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 namespace BetterMajorasMaskInstaller
@@ -39,10 +41,8 @@ namespace BetterMajorasMaskInstaller
             {
                 CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore)
             };
-        }
 
-        public void RegisterEvents()
-        {
+            // register event
             Client.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
             {
                 OnDownloadProgressChanged(source, new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage));
@@ -51,18 +51,28 @@ namespace BetterMajorasMaskInstaller
 
         public int ComponentDownloadIndex { get; set; }
         public InstallerComponent CurrentComponent { get; set; }
-        private bool VerifyFileSize(string fileName, int? bytesLength)
+        /// <summary>
+        /// Verifies MD5 hash
+        /// </summary>
+        private bool VerifyHash(string fileName, string fileHash)
         {
-            if (bytesLength == null)
+            if (fileHash == null)
                 return true;
 
-            using(FileStream fileStream = new FileStream(fileName, FileMode.Open))
-            {
-                if (fileStream.Length == bytesLength)
-                    return true;
-            }
+            if (!File.Exists(fileName))
+                return false;
 
-            return false;
+            using (MD5 md5 = MD5.Create())
+            {
+                using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
+                {
+                    string md5Hash = BitConverter.ToString(md5.ComputeHash(fileStream))
+                        .Replace("-", null)
+                        .ToLower();
+
+                    return md5Hash == fileHash;
+                }
+            }
         }
         /// <summary>
         /// Downloads DownloadComponent in directory
@@ -73,37 +83,34 @@ namespace BetterMajorasMaskInstaller
             CurrentComponent = component;
 
             // loop over each URL and download it
-            foreach (KeyValuePair<string, string> urlInfo in component.Urls)
+            foreach (UrlInfo urlInfo in component.Urls)
             {
                 ComponentDownloadIndex++;
 
-                string url = urlInfo.Key;
-                string file = Path.Combine(directory, urlInfo.Value);
-                int? length = 0;
+                string url = urlInfo.Url;
+                string file = Path.Combine(directory, urlInfo.FileName);
+                string hash = urlInfo.FileHash;
 
-                if(CurrentComponent.FileSizes != null)
-                    length = CurrentComponent.FileSizes[ComponentDownloadIndex];
-
-                // if the file exists
-                // make sure the size is the same as the specified size
-                // if so, skip this item
-                if (File.Exists(file))
-                {
-                    if (VerifyFileSize(file, length))
-                        continue;
-                }
+                // if the hash matches, skip it
+                if (VerifyHash(file, hash))
+                    continue;
 
                 // if the URL is a Google Drive URL,
                 // download it using the Google API
-                // and return
+                // and continue
                 if (IsGoogleDriveUrl(url))
                 {
-                    DownloadGoogleDriveFile(url, file);
-                    return;
+                    DownloadGoogleDriveFile(url, file, hash);
+
+                    // abort when failed
+                    if (Failed)
+                        return;
+
+                    continue;
                 }
 
                 // try to download the file using WebClient
-                // also verify the size when it's done.
+                // also verify the hash when it's done.
                 // since we also want the events to work
                 // we'll download it async
                 // and wait for the WebClient to be done
@@ -116,7 +123,7 @@ namespace BetterMajorasMaskInstaller
                     while (Client.IsBusy)
                         Thread.Sleep(10);
 
-                    Failed = !VerifyFileSize(file, length);
+                    Failed = !VerifyHash(file, hash);
                 }
                 catch (Exception e)
                 {
@@ -124,6 +131,9 @@ namespace BetterMajorasMaskInstaller
                     Failed = true;
                 }
 
+                // abort when failed
+                if (Failed)
+                    return;
             }
         }
         public void Dispose()

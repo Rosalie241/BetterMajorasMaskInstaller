@@ -15,7 +15,7 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Downloads file(from URL) using the Google Drive API
         /// </summary>
-        public void DownloadGoogleDriveFile(string url, string fileName)
+        public void DownloadGoogleDriveFile(string url, string fileName, string fileHash)
         {
             string driveId = url.Split(':')[1];
             using (DriveService service = new DriveService(new BaseClientService.Initializer()
@@ -44,7 +44,7 @@ namespace BetterMajorasMaskInstaller
 
                             case DownloadStatus.Completed:
                                 fileStream.Close();
-                                Failed = false;
+                                Failed = !VerifyHash(fileName, fileHash);
                                 break;
                         }
 

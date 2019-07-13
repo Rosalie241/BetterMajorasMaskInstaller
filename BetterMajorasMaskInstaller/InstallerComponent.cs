@@ -9,13 +9,9 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Url(s) (url, filename)
+        /// Url(s) (url, filename, filesize, md5 hash)
         /// </summary>
-        public Dictionary<string, string> Urls { get; set; }
-        /// <summary>
-        /// Url(s) FileSizes
-        /// </summary>
-        public int?[] FileSizes { get; set; }
+        public List<UrlInfo> Urls { get; set; }
         /// <summary>
         /// Files (source, target)
         /// </summary>

@@ -82,6 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentDownloader.cs" />
     <Compile Include="ComponentDownloader.Project64.cs" />
+    <Compile Include="UrlInfo.cs" />
     <Compile Include="Window\DownloadInstallComponents.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -26,14 +26,10 @@ namespace BetterMajorasMaskInstaller.Window
         {
             InitializeComponent();
 
-            // default to %localappdata%\Project64
             InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
         }
 
-        private void QuitButton_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+        private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
 
         private void ContinueButton_Click(object sender, EventArgs e)
         {
@@ -42,6 +38,27 @@ namespace BetterMajorasMaskInstaller.Window
         }
         private void Welcome_Closing(object sender, CancelEventArgs args) => Application.Exit();
 
+        /// <summary>
+        /// Checks whether we can write to the given directory
+        /// </summary>
+        private bool IsDirectoryAccessible(string directory)
+        {
+            try
+            {
+                File.Create(
+                    Path.Combine(directory,
+                        Path.GetRandomFileName()), 
+                        1, 
+                        FileOptions.DeleteOnClose
+                        ).Close();
+
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
         private void ChangeInstallDirectoryButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog
@@ -54,9 +71,18 @@ namespace BetterMajorasMaskInstaller.Window
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            InstallerSettings.InstallDirectory = dialog.SelectedPath;
+            // make sure we have access to the directory
+            if(!IsDirectoryAccessible(dialog.SelectedPath))
+            {
+                MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ContinueButton.Enabled = false;
+                return;
+            }
 
-            InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
+            InstallDirectoryTextBox.Text = 
+                InstallerSettings.InstallDirectory = dialog.SelectedPath;
+
+            ContinueButton.Enabled = true;
 
         }
     }

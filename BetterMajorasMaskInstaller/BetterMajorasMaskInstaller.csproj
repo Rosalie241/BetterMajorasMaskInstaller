@@ -78,6 +78,7 @@
     <Compile Include="InstallerComponent.cs" />
     <Compile Include="InstallerComponents.cs" />
     <Compile Include="GoogleApiInformation.cs" />
+    <Compile Include="InstallerSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentDownloader.cs" />

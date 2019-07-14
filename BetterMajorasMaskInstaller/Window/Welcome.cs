@@ -15,6 +15,7 @@
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 
 namespace BetterMajorasMaskInstaller.Window
@@ -24,6 +25,10 @@ namespace BetterMajorasMaskInstaller.Window
         public Welcome()
         {
             InitializeComponent();
+
+            // default to %localappdata%\Project64
+            InstallDirectoryTextBox.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Project64");
         }
 
         private void QuitButton_Click(object sender, EventArgs e)
@@ -37,5 +42,23 @@ namespace BetterMajorasMaskInstaller.Window
             new LicenseAgreement() { StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Welcome_Closing(object sender, CancelEventArgs args) => Application.Exit();
+
+        private void ChangeInstallDirectoryButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = true,
+                Description = "MM HD Install Directory"
+            };
+
+            // return when cancelled
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            InstallerSettings.InstallDirectory = dialog.SelectedPath;
+
+            InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
+
+        }
     }
 }

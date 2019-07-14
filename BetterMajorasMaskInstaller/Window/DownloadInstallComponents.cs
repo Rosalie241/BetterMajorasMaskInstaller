@@ -98,11 +98,8 @@ namespace BetterMajorasMaskInstaller.Window
 
         private void DownloadAllComponents()
         {
-            string downloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                    "BetterMajorasMaskInstaller");
-
-            if (!Directory.Exists(downloadPath))
-                Directory.CreateDirectory(downloadPath);
+            if (!Directory.Exists(InstallerSettings.DownloadDirectory))
+                Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
 
             Downloader = new ComponentDownloader();
             Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
@@ -125,7 +122,7 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            string project64FileName = Path.Combine(downloadPath, "Project64.zip");
+            string project64FileName = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
             
             // we *sadly* need to do something special for Project64
             if (!File.Exists(project64FileName))
@@ -146,7 +143,7 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
-                Downloader.DownloadComponent(component, downloadPath);
+                Downloader.DownloadComponent(component, InstallerSettings.DownloadDirectory);
                 
                 if (Downloader.Failed)
                 {

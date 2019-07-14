@@ -55,11 +55,7 @@ namespace BetterMajorasMaskInstaller.Window
         }
         private void Install()
         {
-            string path = Path.Combine(
-                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "BetterMajorasMaskInstaller");
-
-            string sevenZipExecutable = Path.Combine(path, "7za.exe");
+            string sevenZipExecutable = Path.Combine(InstallerSettings.DownloadDirectory, "7za.exe");
 
             if (!File.Exists(sevenZipExecutable))
             {
@@ -67,17 +63,8 @@ namespace BetterMajorasMaskInstaller.Window
                 File.WriteAllBytes(sevenZipExecutable, Properties.Resources._7za);
             }
 
-            // aa
-            string project64File = Path.Combine(path, "Project64.zip");
-
-            // TODO, make this flexible
-            string project64Path = Path.Combine(
-                  Environment.GetEnvironmentVariable("LOCALAPPDATA"),
-                  "Project64");
-
-            if (Directory.Exists(project64Path))
-                Directory.CreateDirectory(project64Path);
-
+            // sadly we need to do something special for pj64
+            string project64File = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
 
             using (ArchiveFile archive = new ArchiveFile(project64File, sevenZipExecutable))
             {
@@ -85,12 +72,12 @@ namespace BetterMajorasMaskInstaller.Window
                 {
                     ChangeProgressBarValue(value);
                 };
-                archive.ExtractAll(project64Path);
+                archive.ExtractAll(InstallerSettings.InstallDirectory);
             }
 
             foreach (InstallerComponent component in Components.Components)
             {
-                string archiveFile = Path.Combine(path, component.Urls.First().FileName);
+                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, component.Urls.First().FileName);
 
                 Log($"Installing {component.Name}...");
 
@@ -103,7 +90,7 @@ namespace BetterMajorasMaskInstaller.Window
                             ChangeProgressBarValue(value);
                         };
 
-                        string targetFile = Path.Combine(project64Path, extractFileInfo.Value);
+                        string targetFile = Path.Combine(InstallerSettings.InstallDirectory, extractFileInfo.Value);
 
                         bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
 

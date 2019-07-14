@@ -25,12 +25,12 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Checks whether URL is a Google Drive URL (using the 'special' format)
         /// </summary>
-        public bool IsGoogleDriveUrl(string url) => url.StartsWith("gdrive:");
+        private bool IsGoogleDriveUrl(string url) => url.StartsWith("gdrive:");
 
         /// <summary>
         /// Downloads file(from URL) using the Google Drive API
         /// </summary>
-        public void DownloadGoogleDriveFile(string url, string fileName, string fileHash)
+        private void DownloadGoogleDriveFile(string url, string fileName, string fileHash)
         {
             string driveId = url.Split(':')[1];
             using (DriveService service = new DriveService(new BaseClientService.Initializer()

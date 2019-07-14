@@ -26,8 +26,8 @@ namespace BetterMajorasMaskInstaller
     public class DownloadStatusChangedEventArgs : EventArgs
     {
         public long BytesReceived { get; set; }
-        public int ProgressPercentage { get; set; }
-        public DownloadStatusChangedEventArgs(long bytesReceived, int progressPercentage)
+        public int? ProgressPercentage { get; set; }
+        public DownloadStatusChangedEventArgs(long bytesReceived, int? progressPercentage = null)
         {
             this.BytesReceived = bytesReceived;
             this.ProgressPercentage = progressPercentage;

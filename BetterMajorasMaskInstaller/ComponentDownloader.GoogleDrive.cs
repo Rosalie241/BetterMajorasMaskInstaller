@@ -48,7 +48,7 @@ namespace BetterMajorasMaskInstaller
                         switch(progress.Status)
                         {
                             case DownloadStatus.Downloading:
-                                OnDownloadProgressChanged(this, new DownloadStatusChangedEventArgs(progress.BytesDownloaded, 0));
+                                OnDownloadProgressChanged(this, new DownloadStatusChangedEventArgs(progress.BytesDownloaded));
                                 fileStream.Flush();
                                 break;
 

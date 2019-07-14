@@ -35,25 +35,45 @@ namespace BetterMajorasMaskInstaller.Window
 
         private void OnDownloadProgressChanged(object source, DownloadStatusChangedEventArgs a)
         {
-            int? fileSize = null;
+            double fileSize = 0;
+            double bytesReceived = a.BytesReceived;
 
-            // TODO
+            // when we've been given the percentage
+            // just use that and return
+            if (a.ProgressPercentage != null)
+            {
+                ChangeProgressBarValue((int)a.ProgressPercentage);
+                return;
+            }
+
+            // get total filesize of *all* the files of the InstallComponent
+            // then get the total download progress instead of the progress per file
+            // and change the progressbar
+            // if it fails for whatever reason, ignore and fallback to given percentage
             try
             {
-                if (Downloader.CurrentComponent.Urls != null)
-                    fileSize = Downloader.CurrentComponent.Urls[Downloader.ComponentDownloadIndex].FileSize;
+                // this is rather hacky sadly
+                // since what if i.e part 2 isn't downloaded but part 3 is?
+                // it'll display it incorrectly,
+                // we don't care for now
+                // since users wont touch the files (I hope..)
+                for (int i = 0; i < Downloader.ComponentDownloadIndex; i++)
+                    bytesReceived += Downloader.CurrentComponent.Urls[i].FileSize;
 
+                // add each filesize to fileSize
+                foreach (UrlInfo urlInfo in Downloader.CurrentComponent.Urls)
+                    fileSize += urlInfo.FileSize;
+
+                // since we only accept int as argument,
+                // just convert bytes to MB and convert that to int
+                // since we'll be going over the maximum int value
+                // if we don't do this
+                ChangeProgressBarValue((int)(bytesReceived / 1024 / 1024), (int)(fileSize / 1024 / 1024));
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // ignore
             }
-
-            if (fileSize == null)
-                ChangeProgressBarValue(a.ProgressPercentage);
-            else
-                ChangeProgressBarValue((int)a.BytesReceived, (int)fileSize);
-           
         }
 
         private void ChangeProgressBarValue(int value, int maxValue = 100)

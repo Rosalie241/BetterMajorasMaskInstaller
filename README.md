@@ -10,6 +10,6 @@ This Installer installs & configures
 * [MM HD Texture Pack](http://www.emutalk.net/threads/56677-Majora-s-Mask-N64HD-Project)
 
 #### Building
-* Create Gogle API Key (make *sure* it has Google drive API access)
+* Create Google API Key (make *sure* it has Google drive API access)
 * Add Google API Key to [BetterMajorasMaskInstaller/GoogleApiInformation.cs](BetterMajorasMaskInstaller/GoogleApiInformation.cs)
 * Open & Build in Visual Studio

@@ -27,12 +27,9 @@ namespace BetterMajorasMaskInstaller.Window
         private void ChangeProgressBarValue(int value)
         {
             if (this.InvokeRequired)
-            {
                 this.Invoke((MethodInvoker)delegate () { ChangeProgressBarValue(value); });
-                return;
-            }
-
-            InstallProgressBar.Value = value;
+            else
+                InstallProgressBar.Value = value;
         }
         private void Log(string text)
         {
@@ -79,6 +76,7 @@ namespace BetterMajorasMaskInstaller.Window
             foreach (InstallerComponent component in Components.Components)
             {
                 string archiveFile = Path.Combine(path, component.Urls.First().FileName);
+
                 Log($"Installing {component.Name}...");
 
                 using (ArchiveFile archive = new ArchiveFile(archiveFile, sevenZipExecutable))
@@ -105,6 +103,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             Log("Completed");
 
+            new System.Media.SoundPlayer(Properties.Resources.MM_Notebook).PlaySync();
         }
     }
 }

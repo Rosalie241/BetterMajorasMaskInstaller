@@ -69,5 +69,14 @@ namespace BetterMajorasMaskInstaller.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream MM_Notebook {
+            get {
+                return ResourceManager.GetStream("MM_Notebook", resourceCulture);
+            }
+        }
     }
 }

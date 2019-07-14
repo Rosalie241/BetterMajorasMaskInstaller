@@ -161,6 +161,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Resource\7za.exe" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\MM_Notebook.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

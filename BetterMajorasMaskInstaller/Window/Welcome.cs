@@ -27,8 +27,7 @@ namespace BetterMajorasMaskInstaller.Window
             InitializeComponent();
 
             // default to %localappdata%\Project64
-            InstallDirectoryTextBox.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Project64");
+            InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
         }
 
         private void QuitButton_Click(object sender, EventArgs e)

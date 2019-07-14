@@ -23,7 +23,9 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Install Directory
         /// </summary>
-        public static string InstallDirectory { get; set; }
+        public static string InstallDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Project64");
 
         /// <summary>
         /// Download Directory

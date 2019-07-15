@@ -103,20 +103,16 @@ namespace BetterMajorasMaskInstaller.Window
             Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
 
             string project64FileName = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
-            
-            // we *sadly* need to do something special for Project64
-            if (!File.Exists(project64FileName))
-            {
-                ChangeProgressBarValue(0);
-                Log("Downloading Project64...");
-                Downloader.Project64(project64FileName);
 
-                if(Downloader.Failed)
-                {
-                    Log("Downloading Project64 Failed");
-                    Log(Downloader.Exception.Message);
-                    Log(Downloader.Exception.StackTrace);                    
-                }
+            // we *sadly* need to do something special for Project64
+            Log("Downloading Project64...");
+            Downloader.Project64(project64FileName);
+
+            if (Downloader.Failed)
+            {
+                Log("Downloading Project64 Failed");
+                Log(Downloader.Exception.Message);
+                Log(Downloader.Exception.StackTrace);
             }
 
             foreach (InstallerComponent component in InstallerComponents.Components)
@@ -129,7 +125,7 @@ namespace BetterMajorasMaskInstaller.Window
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
                 Downloader.DownloadComponent(component, InstallerSettings.DownloadDirectory);
-                
+
                 if (Downloader.Failed)
                 {
                     Log($"Downloading {component.Name} Failed");

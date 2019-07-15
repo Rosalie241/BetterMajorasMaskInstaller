@@ -29,6 +29,7 @@ namespace BetterMajorasMaskInstaller.Window
             InitializeComponent();
 
             InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
+            DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory;
         }
         public InstallerComponents InstallerComponents { get; set; }
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
@@ -91,15 +92,34 @@ namespace BetterMajorasMaskInstaller.Window
             if(!IsDirectoryAccessible(dialog.SelectedPath))
             {
                 MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                ContinueButton.Enabled = false;
                 return;
             }
 
             InstallDirectoryTextBox.Text = 
                 InstallerSettings.InstallDirectory = dialog.SelectedPath;
+        }
 
-            ContinueButton.Enabled = true;
+        private void ChangeDownloadDirectoryButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog()
+            {
+                ShowNewFolderButton = true,
+                Description = "Download Cache Directory"
+            };
 
+            // return when cancelled
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            // make sure we have access to the directory
+            if (!IsDirectoryAccessible(dialog.SelectedPath))
+            {
+                MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            DownloadDirectoryTextBox.Text =
+                InstallerSettings.DownloadDirectory = dialog.SelectedPath;
         }
     }
 }

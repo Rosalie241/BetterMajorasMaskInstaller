@@ -32,6 +32,8 @@
             this.QuitButton = new System.Windows.Forms.Button();
             this.InstallDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.ChangeInstallDirectoryButton = new System.Windows.Forms.Button();
+            this.DownloadDirectoryTextBox = new System.Windows.Forms.TextBox();
+            this.ChangeDownloadDirectoryButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ContinueButton
@@ -72,11 +74,31 @@
             this.ChangeInstallDirectoryButton.UseVisualStyleBackColor = true;
             this.ChangeInstallDirectoryButton.Click += new System.EventHandler(this.ChangeInstallDirectoryButton_Click);
             // 
+            // DownloadDirectoryTextBox
+            // 
+            this.DownloadDirectoryTextBox.Location = new System.Drawing.Point(13, 39);
+            this.DownloadDirectoryTextBox.Name = "DownloadDirectoryTextBox";
+            this.DownloadDirectoryTextBox.ReadOnly = true;
+            this.DownloadDirectoryTextBox.Size = new System.Drawing.Size(397, 20);
+            this.DownloadDirectoryTextBox.TabIndex = 4;
+            // 
+            // ChangeDownloadDirectoryButton
+            // 
+            this.ChangeDownloadDirectoryButton.Location = new System.Drawing.Point(416, 39);
+            this.ChangeDownloadDirectoryButton.Name = "ChangeDownloadDirectoryButton";
+            this.ChangeDownloadDirectoryButton.Size = new System.Drawing.Size(156, 21);
+            this.ChangeDownloadDirectoryButton.TabIndex = 5;
+            this.ChangeDownloadDirectoryButton.Text = "Change Download Directory";
+            this.ChangeDownloadDirectoryButton.UseVisualStyleBackColor = true;
+            this.ChangeDownloadDirectoryButton.Click += new System.EventHandler(this.ChangeDownloadDirectoryButton_Click);
+            // 
             // Welcome
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 361);
+            this.Controls.Add(this.ChangeDownloadDirectoryButton);
+            this.Controls.Add(this.DownloadDirectoryTextBox);
             this.Controls.Add(this.ChangeInstallDirectoryButton);
             this.Controls.Add(this.InstallDirectoryTextBox);
             this.Controls.Add(this.QuitButton);
@@ -100,5 +122,7 @@
         private System.Windows.Forms.Button QuitButton;
         private System.Windows.Forms.TextBox InstallDirectoryTextBox;
         private System.Windows.Forms.Button ChangeInstallDirectoryButton;
+        private System.Windows.Forms.TextBox DownloadDirectoryTextBox;
+        private System.Windows.Forms.Button ChangeDownloadDirectoryButton;
     }
 }

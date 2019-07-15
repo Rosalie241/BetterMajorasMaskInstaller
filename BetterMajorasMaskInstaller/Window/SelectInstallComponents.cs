@@ -53,11 +53,6 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            //            if (e.NewValue == CheckState.Unchecked)
-            //              return;
-            if (InstallerComponents == null)
-                return;
-
             foreach(InstallerComponent component in InstallerComponents.Components)
             {
                 if (component.Name ==

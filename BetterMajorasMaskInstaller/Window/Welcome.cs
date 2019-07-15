@@ -13,9 +13,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 
 namespace BetterMajorasMaskInstaller.Window
@@ -28,13 +30,27 @@ namespace BetterMajorasMaskInstaller.Window
 
             InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
         }
-
+        public InstallerComponents InstallerComponents { get; set; }
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
 
         private void ContinueButton_Click(object sender, EventArgs e)
         {
+            // fetch configuration file
+            try
+            {
+                InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
+                                                    new WebClient().DownloadString(
+                                                        InstallerSettings.ConfigurationUrl));
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("Failed to fetch configuration file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+
             this.Hide();
-            new LicenseAgreement() { StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new LicenseAgreement() { InstallerComponents = InstallerComponents,
+                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Welcome_Closing(object sender, CancelEventArgs args) => Application.Exit();
 

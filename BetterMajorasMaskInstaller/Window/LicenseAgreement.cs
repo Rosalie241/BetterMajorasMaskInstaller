@@ -25,7 +25,7 @@ namespace BetterMajorasMaskInstaller.Window
         {
             InitializeComponent();
         }
-
+        public InstallerComponents InstallerComponents { get; set; }
         private void DisagreeButton_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -34,7 +34,8 @@ namespace BetterMajorasMaskInstaller.Window
         private void AgreeButton_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new SelectInstallComponents() { StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new SelectInstallComponents(InstallerComponents) {
+                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void LicenseAgreement_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }

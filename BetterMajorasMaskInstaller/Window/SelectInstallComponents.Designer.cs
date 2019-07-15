@@ -61,6 +61,7 @@
             this.InstallComponentsList.Size = new System.Drawing.Size(420, 289);
             this.InstallComponentsList.TabIndex = 2;
             this.InstallComponentsList.SelectedIndexChanged += new System.EventHandler(this.InstallComponentsList_SelectedIndexChanged);
+            this.InstallComponentsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.InstallComponentsList_ItemCheck);
             // 
             // SelectInstallComponents
             // 

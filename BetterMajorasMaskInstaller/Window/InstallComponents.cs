@@ -31,7 +31,7 @@ namespace BetterMajorasMaskInstaller.Window
             InitializeComponent();
         }
 
-        public InstallerComponents Components { get; set; }
+        public InstallerComponents InstallerComponents { get; set; }
 
         private void InstallComponents_Load(object sender, EventArgs args)
         {
@@ -66,21 +66,35 @@ namespace BetterMajorasMaskInstaller.Window
             // sadly we need to do something special for pj64
             string project64File = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
 
+            Log("Installing Project64...");
+
             using (ArchiveFile archive = new ArchiveFile(project64File, sevenZipExecutable))
             {
                 archive.OnProgressChange += (object source, int value) =>
                 {
                     ChangeProgressBarValue(value);
                 };
-                archive.ExtractAll(InstallerSettings.InstallDirectory);
+
+                bool extractSuccess = archive.ExtractAll(InstallerSettings.InstallDirectory);
+
+                if(!extractSuccess)
+                {
+                    Log("Installing Project64 Failed");
+                    return;
+                }
             }
 
-            foreach (InstallerComponent component in Components.Components)
+            foreach (InstallerComponent component in InstallerComponents.Components)
             {
+                // if it's disabled,
+                // skip it
+                if (!component.Enabled)
+                    continue;
+
                 string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, component.Urls.First().FileName);
 
                 Log($"Installing {component.Name}...");
-
+                
                 using (ArchiveFile archive = new ArchiveFile(archiveFile, sevenZipExecutable))
                 {
                     foreach (KeyValuePair<string, string> extractFileInfo in component.Files)

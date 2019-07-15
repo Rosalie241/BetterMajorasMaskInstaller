@@ -14,7 +14,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
@@ -22,19 +21,22 @@ namespace BetterMajorasMaskInstaller.Window
 {
     public partial class SelectInstallComponents : Form
     {
-        private Dictionary<string, bool> InstallComponentsItems = new Dictionary<string, bool>()
-        {
-            { "Project64 + Plugins", true }
-        }; 
+        public InstallerComponents InstallerComponents { get; set; }
 
-        public SelectInstallComponents()
+        public SelectInstallComponents(InstallerComponents installerComponents)
         {
             InitializeComponent();
 
-            foreach (KeyValuePair<string, bool> installComponent in InstallComponentsItems)
+            // we sadly need InstallerComponents really early
+            // so we set it here
+            this.InstallerComponents = installerComponents;
+
+            // readonly 'placeholder' item
+            InstallComponentsList.Items.Add("Project64", CheckState.Indeterminate);
+
+            foreach (InstallerComponent component in InstallerComponents.Components)
             {
-                InstallComponentsList.Items.Add(installComponent.Key);
-                InstallComponentsList.SetItemChecked(InstallComponentsList.Items.IndexOf(installComponent.Key), installComponent.Value);
+                InstallComponentsList.Items.Add(component.Name, component.Enabled);
             }
         }
 
@@ -42,16 +44,43 @@ namespace BetterMajorasMaskInstaller.Window
         {
             Application.Exit();
         }
+        private void InstallComponentsList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            // if it's 'readonly', keep it 'readonly'
+            if (e.CurrentValue == CheckState.Indeterminate)
+            {
+                e.NewValue = CheckState.Indeterminate;
+                return;
+            }
 
+            //            if (e.NewValue == CheckState.Unchecked)
+            //              return;
+            if (InstallerComponents == null)
+                return;
+
+            foreach(InstallerComponent component in InstallerComponents.Components)
+            {
+                if (component.Name ==
+                    InstallComponentsList.Items[e.Index].ToString())
+                {
+                    component.Enabled = e.NewValue == CheckState.Checked;
+                    break;
+                }
+            }
+
+            InstallButton.Enabled = true;
+
+        }
         private void InstallComponentsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            InstallButton.Enabled = InstallComponentsList.CheckedItems.Count != 0;
+           // InstallButton.Enabled = InstallComponentsList.CheckedItems.Count != 0;
         }
 
         private void InstallButton_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new DownloadInstallComponents() { StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new DownloadInstallComponents() { InstallerComponents = InstallerComponents,
+                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void SelectInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }

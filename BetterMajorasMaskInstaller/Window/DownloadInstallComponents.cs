@@ -16,10 +16,8 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 
 namespace BetterMajorasMaskInstaller.Window
 {
@@ -94,7 +92,7 @@ namespace BetterMajorasMaskInstaller.Window
             progressBar1.Value = value;
         }
         private ComponentDownloader Downloader { get; set; }
-        private InstallerComponents InstallerComponents = new InstallerComponents();
+        public InstallerComponents InstallerComponents { get; set; }
 
         private void DownloadAllComponents()
         {
@@ -103,24 +101,6 @@ namespace BetterMajorasMaskInstaller.Window
 
             Downloader = new ComponentDownloader();
             Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
-
-            string configUrl = "https://raw.githubusercontent.com/tim241/BetterMajorasMaskInstaller-cfg/master/config.json";
-
-            // Download the Installer Configuration
-            // and parse it
-            try
-            {
-                Log("Downloading Installer Configuration...");
-                InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
-                                                new WebClient().DownloadString(configUrl));
-            }
-            catch (Exception e)
-            {
-                Log("Downloading Installer Configuration Failed");
-                Log(e.Message);
-                Log(e.StackTrace);
-                return;
-            }
 
             string project64FileName = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
             
@@ -141,6 +121,11 @@ namespace BetterMajorasMaskInstaller.Window
 
             foreach (InstallerComponent component in InstallerComponents.Components)
             {
+                // if it's disabled,
+                // skip it
+                if (!component.Enabled)
+                    continue;
+
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
                 Downloader.DownloadComponent(component, InstallerSettings.DownloadDirectory);
@@ -172,7 +157,8 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new InstallComponents() { Components = InstallerComponents, StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new InstallComponents() { InstallerComponents = InstallerComponents,
+                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
         }
         private void Log(string text)
         {   

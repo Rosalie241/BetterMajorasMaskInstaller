@@ -24,6 +24,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Whether this component is enabled
+        /// </summary>
+        public bool Enabled { get; set; }
+        /// <summary>
         /// Url(s) (url, filename, filesize, md5 hash)
         /// </summary>
         public List<UrlInfo> Urls { get; set; }

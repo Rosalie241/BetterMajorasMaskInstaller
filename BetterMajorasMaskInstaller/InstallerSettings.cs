@@ -33,5 +33,10 @@ namespace BetterMajorasMaskInstaller
         public static string DownloadDirectory = Path.Combine(
                  Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "BetterMajorasMaskInstaller");
+        /// <summary>
+        /// Configuration File Url
+        /// </summary>
+        public static string ConfigurationUrl = 
+            "https://raw.githubusercontent.com/tim241/BetterMajorasMaskInstaller-cfg/master/config.json";
     }
 }

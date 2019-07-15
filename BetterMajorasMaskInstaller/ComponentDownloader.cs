@@ -49,11 +49,8 @@ namespace BetterMajorasMaskInstaller
         public Exception Exception { get; set; }
         public ComponentDownloader()
         {
-            // create WebClient and disable cache
-            Client = new WebClient
-            {
-                CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore)
-            };
+            // create WebClient
+            Client = new WebClient();
 
             // register event
             Client.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>

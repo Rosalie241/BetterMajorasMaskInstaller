@@ -79,6 +79,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LicenseAgreement";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "License";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LicenseAgreement_Closing);

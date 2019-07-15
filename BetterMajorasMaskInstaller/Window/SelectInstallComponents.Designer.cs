@@ -74,6 +74,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SelectInstallComponents";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select Install Components";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectInstallComponents_Closing);

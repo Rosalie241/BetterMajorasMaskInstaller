@@ -85,6 +85,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Welcome";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Welcome";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Welcome_Closing);

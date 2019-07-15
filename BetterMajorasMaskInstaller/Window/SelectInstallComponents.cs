@@ -41,6 +41,7 @@ namespace BetterMajorasMaskInstaller.Window
         }
 
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
+
         private void InstallComponentsList_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             // if it's 'readonly', keep it 'readonly'
@@ -62,10 +63,6 @@ namespace BetterMajorasMaskInstaller.Window
 
             InstallButton.Enabled = true;
 
-        }
-        private void InstallComponentsList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           // InstallButton.Enabled = InstallComponentsList.CheckedItems.Count != 0;
         }
 
         private void InstallButton_Click(object sender, EventArgs e)

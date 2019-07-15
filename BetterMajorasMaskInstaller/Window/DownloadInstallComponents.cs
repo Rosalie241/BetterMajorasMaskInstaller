@@ -113,6 +113,7 @@ namespace BetterMajorasMaskInstaller.Window
                 Log("Downloading Project64 Failed");
                 Log(Downloader.Exception.Message);
                 Log(Downloader.Exception.StackTrace);
+                return;
             }
 
             foreach (InstallerComponent component in InstallerComponents.Components)

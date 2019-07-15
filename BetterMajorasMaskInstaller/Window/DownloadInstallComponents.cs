@@ -154,8 +154,12 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new InstallComponents() { InstallerComponents = InstallerComponents,
-                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new InstallComponents()
+            {
+                InstallerComponents = InstallerComponents,
+                StartPosition = FormStartPosition.Manual,
+                Location = this.Location
+            }.Show();
         }
         private void Log(string text)
         {   

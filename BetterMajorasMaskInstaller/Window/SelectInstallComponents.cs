@@ -40,7 +40,15 @@ namespace BetterMajorasMaskInstaller.Window
             }
         }
 
-        private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
+        private void BackButton_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            new Welcome()
+            {
+                StartPosition = FormStartPosition.Manual,
+                Location = this.Location
+            }.Show();
+        }
 
         private void InstallComponentsList_ItemCheck(object sender, ItemCheckEventArgs e)
         {

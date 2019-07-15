@@ -49,9 +49,9 @@
             this.QuitButton.Name = "QuitButton";
             this.QuitButton.Size = new System.Drawing.Size(75, 23);
             this.QuitButton.TabIndex = 1;
-            this.QuitButton.Text = "Quit";
+            this.QuitButton.Text = "Back";
             this.QuitButton.UseVisualStyleBackColor = true;
-            this.QuitButton.Click += new System.EventHandler(this.QuitButton_Click);
+            this.QuitButton.Click += new System.EventHandler(this.BackButton_Click);
             // 
             // InstallComponentsList
             // 

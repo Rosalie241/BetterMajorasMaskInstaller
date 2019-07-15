@@ -50,8 +50,11 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
-            new LicenseAgreement() { InstallerComponents = InstallerComponents,
-                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new SelectInstallComponents(InstallerComponents)
+            {
+                StartPosition = FormStartPosition.Manual,
+                Location = this.Location
+            }.Show();
         }
         private void Welcome_Closing(object sender, CancelEventArgs args) => Application.Exit();
 

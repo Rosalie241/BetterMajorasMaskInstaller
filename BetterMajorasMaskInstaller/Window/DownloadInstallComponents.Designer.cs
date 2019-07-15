@@ -60,7 +60,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DownloadInstallComponents";
-            this.Text = "DownloadInstallComponents";
+            this.Text = "Downloading Components";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DownloadInstallComponents_Closing);
             this.ResumeLayout(false);
             this.PerformLayout();

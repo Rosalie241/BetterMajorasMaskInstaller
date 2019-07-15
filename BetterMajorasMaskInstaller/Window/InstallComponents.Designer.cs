@@ -60,7 +60,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "InstallComponents";
-            this.Text = "InstallComponents";
+            this.Text = "Installing Components";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InstallComponents_Closing);
             this.Load += new System.EventHandler(this.InstallComponents_Load);
             this.ResumeLayout(false);

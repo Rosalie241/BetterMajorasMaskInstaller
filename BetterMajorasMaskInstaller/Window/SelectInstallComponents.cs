@@ -40,10 +40,7 @@ namespace BetterMajorasMaskInstaller.Window
             }
         }
 
-        private void QuitButton_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+        private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
         private void InstallComponentsList_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             // if it's 'readonly', keep it 'readonly'

@@ -38,6 +38,8 @@ namespace BetterMajorasMaskInstaller.Window
                     InstallerSettings.InstallDirectory,
                     "Project64.exe");
 
+                shortcut.WorkingDirectory = InstallerSettings.InstallDirectory;
+
                 shortcut.Save();  
             }
 

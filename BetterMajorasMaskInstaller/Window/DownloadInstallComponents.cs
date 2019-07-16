@@ -162,11 +162,15 @@ namespace BetterMajorasMaskInstaller.Window
             }.Show();
         }
         private void Log(string text)
-        {   
+        {
+
             if (this.InvokeRequired)
                 this.Invoke((MethodInvoker)delegate () { Log(text); });
             else
+            {
+                Logger.Log(text);
                 LogBox.Text += text + Environment.NewLine;
+            }
         }
         private void DownloadInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }

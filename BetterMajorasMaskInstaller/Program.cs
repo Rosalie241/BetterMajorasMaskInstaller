@@ -26,6 +26,8 @@ namespace BetterMajorasMaskInstaller
         [STAThread]
         static void Main()
         {
+            Logger.StartLoggingAsync();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Window.LicenseAgreement());

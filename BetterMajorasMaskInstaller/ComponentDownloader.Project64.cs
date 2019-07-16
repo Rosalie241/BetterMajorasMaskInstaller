@@ -42,6 +42,8 @@ namespace BetterMajorasMaskInstaller
                 // if the match contains 'setup', skip it
                 foreach (Match match in mCollection)
                 {
+                    Logger.Log($"{match.Success}: {match.Value}");
+
                     if (!match.Success)
                         continue;
 
@@ -70,11 +72,22 @@ namespace BetterMajorasMaskInstaller
                 if (url == null)
                     throw new Exception("Couldn't find latest nightly URL!");
 
+                bool done = false;
+                // for the logging
+                CurrentFile = fileName;
+                CurrentUrl = url;
+                CurrentFileHash = "N/A";
+
                 Client.DownloadFileAsync(new System.Uri(url), fileName);
+
+                Client.DownloadFileCompleted += (sender, args) =>
+                {
+                    done = true;
+                };
 
                 // we use Thread.Sleep here because
                 // Thread.Yield has high cpu usage
-                while (Client.IsBusy)
+                while (!done)
                     Thread.Sleep(10);
 
                 Failed = false;

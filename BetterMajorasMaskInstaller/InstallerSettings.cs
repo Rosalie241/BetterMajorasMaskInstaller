@@ -38,5 +38,9 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public static string ConfigurationUrl = 
             "https://raw.githubusercontent.com/tim241/BetterMajorasMaskInstaller-cfg/master/config.json";
+
+        public static string LogFile = Path.Combine(
+            InstallerSettings.DownloadDirectory,
+            "log.txt");
     }
 }

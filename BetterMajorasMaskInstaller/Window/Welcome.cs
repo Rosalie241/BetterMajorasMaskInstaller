@@ -44,11 +44,17 @@ namespace BetterMajorasMaskInstaller.Window
                                                     new WebClient().DownloadString(
                                                         InstallerSettings.ConfigurationUrl));
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                // log exception
+                Logger.Log(ex.Message);
+                Logger.Log(ex.StackTrace);
                 MessageBox.Show("Failed to fetch configuration file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            // log configuration
+            Logger.Log(JsonConvert.SerializeObject(InstallerComponents));
 
             // disk space in mb
             long diskSpaceRequired = 0;

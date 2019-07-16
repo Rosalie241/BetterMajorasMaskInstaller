@@ -48,11 +48,13 @@ namespace BetterMajorasMaskInstaller
                         switch(progress.Status)
                         {
                             case DownloadStatus.Downloading:
+                                Logger.Log($"{url} {fileName} {fileHash}: {progress.BytesDownloaded}");
                                 OnDownloadProgressChanged(this, new DownloadStatusChangedEventArgs(progress.BytesDownloaded));
                                 fileStream.Flush();
                                 break;
 
                             case DownloadStatus.Failed:
+                                Logger.Log($"{url} {fileName} {fileHash}: {progress.Exception}");
                                 Exception = progress.Exception;
                                 Failed = true;
                                 return;

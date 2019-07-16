@@ -51,7 +51,10 @@ namespace BetterMajorasMaskInstaller.Window
             if (this.InvokeRequired)
                 this.Invoke((MethodInvoker)delegate () { Log(text); });
             else
+            {
+                Logger.Log(text);
                 LogBox.Text += text + Environment.NewLine;
+            }
         }
         private void Install()
         {
@@ -77,7 +80,11 @@ namespace BetterMajorasMaskInstaller.Window
 
                 bool extractSuccess = archive.ExtractAll(InstallerSettings.InstallDirectory);
 
-                if(!extractSuccess)
+                // log 7za output
+                Logger.Log(String.Join(Environment.NewLine, archive.StandardOutput));
+                Logger.Log(String.Join(Environment.NewLine, archive.ErrorOutput));
+
+                if (!extractSuccess)
                 {
                     Log("Installing Project64 Failed");
                     if(archive.Exception != null)
@@ -99,7 +106,6 @@ namespace BetterMajorasMaskInstaller.Window
                 string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, component.Urls.First().FileName);
 
                 Log($"Installing {component.Name}...");
-                
                 using (ArchiveFile archive = new ArchiveFile(archiveFile, sevenZipExecutable))
                 {
                     foreach (KeyValuePair<string, string> extractFileInfo in component.Files)
@@ -113,6 +119,10 @@ namespace BetterMajorasMaskInstaller.Window
 
                         bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
 
+                        // log 7za output
+                        Logger.Log(String.Join(Environment.NewLine, archive.StandardOutput));
+                        Logger.Log(String.Join(Environment.NewLine, archive.ErrorOutput));
+
                         if (!extractSuccess)
                         {
                             Log($"Installing {component.Name} Failed");
@@ -121,7 +131,8 @@ namespace BetterMajorasMaskInstaller.Window
                             {
                                 Log(archive.Exception.Message);
                                 Log(archive.Exception.StackTrace);
-                            }                          
+                            }
+                            
                             return;
                         }
                     }

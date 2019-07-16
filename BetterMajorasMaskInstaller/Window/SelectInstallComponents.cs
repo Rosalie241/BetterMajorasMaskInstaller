@@ -76,8 +76,12 @@ namespace BetterMajorasMaskInstaller.Window
         private void InstallButton_Click(object sender, EventArgs e)
         {
             this.Hide();
-            new DownloadInstallComponents() { InstallerComponents = InstallerComponents,
-                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+            new DownloadInstallComponents()
+            {
+                InstallerComponents = InstallerComponents,
+                StartPosition = FormStartPosition.Manual,
+                Location = this.Location
+            }.Show();
         }
         private void SelectInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }

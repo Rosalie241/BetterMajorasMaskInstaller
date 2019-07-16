@@ -36,8 +36,10 @@ namespace BetterMajorasMaskInstaller
 
     partial class ComponentDownloader : IDisposable
     {
-        private static WebClient Client { get; set; }
-        
+        private WebClient Client { get; set; }
+        private string CurrentFile { get; set; }
+        private string CurrentFileHash { get; set; }
+        private string CurrentUrl { get; set; }
         public DownloadStatusChangedEventHandler OnDownloadProgressChanged { get; set; }
         /// <summary>
         /// whether the download failed
@@ -55,6 +57,7 @@ namespace BetterMajorasMaskInstaller
             // register event
             Client.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
             {
+                Logger.Log($"{CurrentUrl} {CurrentFile} {CurrentFileHash}: {args.BytesReceived}");
                 OnDownloadProgressChanged(source, new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage));
             };
         }
@@ -80,6 +83,13 @@ namespace BetterMajorasMaskInstaller
                         .Replace("-", null)
                         .ToLower();
 
+                    Logger.Log($"{fileName}: {fileHash} {fileStream.Length}");
+
+                    if (md5Hash != fileHash)
+                        Logger.Log($"{fileName}: {fileHash} != {md5Hash}");
+                    else
+                        Logger.Log($"{fileName}: {fileHash} == {md5Hash}");
+
                     return md5Hash == fileHash;
                 }
             }
@@ -100,6 +110,11 @@ namespace BetterMajorasMaskInstaller
                 string url = urlInfo.Url;
                 string file = Path.Combine(directory, urlInfo.FileName);
                 string hash = urlInfo.FileHash;
+
+                // update vars
+                CurrentUrl = url;
+                CurrentFile = file;
+                CurrentFileHash = hash;
 
                 // if the hash matches, skip it
                 if (VerifyHash(file, hash))
@@ -126,11 +141,17 @@ namespace BetterMajorasMaskInstaller
                 // and wait for the WebClient to be done
                 try
                 {
+                    bool done = false;
                     Client.DownloadFileAsync(new Uri(url), file);
+
+                    Client.DownloadFileCompleted += (sender, args) =>
+                    {
+                        done = true;
+                    };
 
                     // we use Thread.Sleep here because
                     // Thread.Yield has high cpu usage
-                    while (Client.IsBusy)
+                    while (!done)
                         Thread.Sleep(10);
 
                     Failed = !VerifyHash(file, hash);

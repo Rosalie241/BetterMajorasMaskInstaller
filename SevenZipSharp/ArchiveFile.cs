@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -46,6 +47,18 @@ namespace SevenZipSharp
                 throw new InvalidDataException("Archive doesn't exist!");
         }
         /// <summary>
+        /// 7za stdout
+        /// </summary>
+        public List<string> StandardOutput = new List<string>();
+        /// <summary>
+        /// 7za stderr
+        /// </summary>
+        public List<string> ErrorOutput = new List<string>();
+        /// <summary>
+        /// Exception if something bad happens
+        /// </summary>
+        public Exception Exception { get; set; }
+        /// <summary>
         /// Process OutputDataReceived event handler
         /// </summary>
         private void OnOutputDataReceived(object sender, DataReceivedEventArgs args)
@@ -56,6 +69,10 @@ namespace SevenZipSharp
             // :)
 
             string line = args.Data;
+
+            // add to output :)
+            StandardOutput.Add(line);
+
             if (line == null)
                 return;
 
@@ -72,7 +89,10 @@ namespace SevenZipSharp
 
             // ignore data if it's useless for us
             if (!line.Contains("%") || !line.Contains("-"))
+            {
+
                 return;
+            }
 
             // extract percentage from line
             string percentageString = null;
@@ -134,21 +154,28 @@ namespace SevenZipSharp
                         FileName = SevenZipExecutable,
                         Arguments = arguments,
                         RedirectStandardOutput = true,
-                        RedirectStandardError = false,
+                        RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
                     };
 
                     p.OutputDataReceived += OnOutputDataReceived;
+                    // add stderr to ErrorOutput
+                    p.ErrorDataReceived += (object sender, DataReceivedEventArgs args) =>
+                    {
+                        ErrorOutput.Add(args.Data);
+                    };
                     p.Start();
                     p.BeginOutputReadLine();
+                    p.BeginErrorReadLine();
                     p.WaitForExit();
 
                     return p.ExitCode == 0;
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
+                Exception = e;
                 return false;
             }
         }

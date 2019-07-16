@@ -80,6 +80,11 @@ namespace BetterMajorasMaskInstaller.Window
                 if(!extractSuccess)
                 {
                     Log("Installing Project64 Failed");
+                    if(archive.Exception != null)
+                    {
+                        Log(archive.Exception.Message);
+                        Log(archive.Exception.StackTrace);
+                    }
                     return;
                 }
             }
@@ -108,9 +113,15 @@ namespace BetterMajorasMaskInstaller.Window
 
                         bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
 
-                        if(!extractSuccess)
+                        if (!extractSuccess)
                         {
                             Log($"Installing {component.Name} Failed");
+
+                            if (archive.Exception != null)
+                            {
+                                Log(archive.Exception.Message);
+                                Log(archive.Exception.StackTrace);
+                            }                          
                             return;
                         }
                     }
@@ -119,7 +130,26 @@ namespace BetterMajorasMaskInstaller.Window
 
             Log("Completed");
 
-            new System.Media.SoundPlayer(Properties.Resources.MM_Notebook).PlaySync();
+            LaunchCompleted();
+        }
+
+        public void LaunchCompleted()
+        {
+            if(this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { LaunchCompleted(); });
+                return;
+            }
+
+            this.Hide();
+
+            new System.Media.SoundPlayer(Properties.Resources.MM_Notebook).Play();
+
+            new Completed()
+            {
+                StartPosition = FormStartPosition.Manual,
+                Location = this.Location
+            }.Show();
         }
     }
 }

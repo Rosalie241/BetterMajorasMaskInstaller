@@ -55,9 +55,12 @@ namespace BetterMajorasMaskInstaller.Window
             // fetch configuration file
             try
             {
-                InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
-                                                    new WebClient().DownloadString(
-                                                        InstallerSettings.ConfigurationUrl));
+                if (InstallerComponents == null)
+                {
+                    InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
+                                                        new WebClient().DownloadString(
+                                                            InstallerSettings.ConfigurationUrl));
+                }
             }
             catch (Exception)
             {

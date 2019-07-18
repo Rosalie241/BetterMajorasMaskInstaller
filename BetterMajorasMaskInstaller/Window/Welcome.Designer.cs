@@ -60,7 +60,6 @@
             // 
             this.InstallDirectoryTextBox.Location = new System.Drawing.Point(12, 12);
             this.InstallDirectoryTextBox.Name = "InstallDirectoryTextBox";
-            this.InstallDirectoryTextBox.ReadOnly = true;
             this.InstallDirectoryTextBox.Size = new System.Drawing.Size(398, 20);
             this.InstallDirectoryTextBox.TabIndex = 2;
             // 
@@ -78,7 +77,6 @@
             // 
             this.DownloadDirectoryTextBox.Location = new System.Drawing.Point(13, 39);
             this.DownloadDirectoryTextBox.Name = "DownloadDirectoryTextBox";
-            this.DownloadDirectoryTextBox.ReadOnly = true;
             this.DownloadDirectoryTextBox.Size = new System.Drawing.Size(397, 20);
             this.DownloadDirectoryTextBox.TabIndex = 4;
             // 

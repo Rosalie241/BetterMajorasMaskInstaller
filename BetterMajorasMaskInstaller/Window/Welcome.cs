@@ -34,9 +34,61 @@ namespace BetterMajorasMaskInstaller.Window
         }
         public InstallerComponents InstallerComponents { get; set; }
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
-
         private void ContinueButton_Click(object sender, EventArgs e)
         {
+            InstallerSettings.InstallDirectory = InstallDirectoryTextBox.Text;
+            InstallerSettings.DownloadDirectory = DownloadDirectoryTextBox.Text;
+
+            // change download directory when install & download directory 
+            // are the same
+            if(InstallerSettings.InstallDirectory == InstallerSettings.DownloadDirectory)
+            {
+                InstallerSettings.DownloadDirectory = Path.Combine(InstallerSettings.DownloadDirectory, 
+                    "download_cache");
+            }
+
+            if(!Directory.Exists(InstallerSettings.DownloadDirectory))
+            {
+                DialogResult result = MessageBox.Show("Download directory doesn't exist, do you want it to be created?", 
+                    "Info",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                if (result != DialogResult.Yes)
+                    return;
+
+                try
+                {
+                    Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("Failed to create download directory", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            if (!Directory.Exists(InstallerSettings.InstallDirectory))
+            {
+                DialogResult result = MessageBox.Show("Install directory doesn't exist, do you want it to be created?",
+                   "Info",
+                   MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                if (result != DialogResult.Yes)
+                    return;
+
+                try
+                {
+                    Directory.CreateDirectory(InstallerSettings.InstallDirectory);
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("Failed to create install directory", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
             // fetch configuration file
             try
             {
@@ -115,6 +167,10 @@ namespace BetterMajorasMaskInstaller.Window
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
+            // make sure selected path isn't nothing
+            if (String.IsNullOrEmpty(dialog.SelectedPath))
+                return;
+
             // make sure we have access to the directory
             if(!IsDirectoryAccessible(dialog.SelectedPath))
             {
@@ -125,9 +181,10 @@ namespace BetterMajorasMaskInstaller.Window
             // make sure download & install directory aren't the same
             if (dialog.SelectedPath == InstallerSettings.DownloadDirectory)
             {
-                MessageBox.Show("Install & download directory cannot be the same!", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
+                DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory 
+                    = Path.Combine(InstallerSettings.DownloadDirectory,
+                    "download_cache");
+                Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
             }
 
             InstallDirectoryTextBox.Text = 
@@ -146,18 +203,21 @@ namespace BetterMajorasMaskInstaller.Window
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            // make sure we have access to the directory
-            if (!IsDirectoryAccessible(dialog.SelectedPath))
-            {
-                MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // make sure selected path isn't nothing
+            if (String.IsNullOrEmpty(dialog.SelectedPath))
                 return;
-            }
 
             // make sure download & install directory aren't the same
             if (dialog.SelectedPath == InstallerSettings.InstallDirectory)
             {
-                MessageBox.Show("Install & download directory cannot be the same!", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                dialog.SelectedPath = Path.Combine(dialog.SelectedPath, "download_cache");
+                Directory.CreateDirectory(dialog.SelectedPath);
+            }
+
+            // make sure we have access to the directory
+            if (!IsDirectoryAccessible(dialog.SelectedPath))
+            {
+                MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

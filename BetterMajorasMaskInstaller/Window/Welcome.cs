@@ -122,6 +122,14 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
+            // make sure download & install directory aren't the same
+            if (dialog.SelectedPath == InstallerSettings.DownloadDirectory)
+            {
+                MessageBox.Show("Install & download directory cannot be the same!", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
             InstallDirectoryTextBox.Text = 
                 InstallerSettings.InstallDirectory = dialog.SelectedPath;
         }
@@ -142,6 +150,14 @@ namespace BetterMajorasMaskInstaller.Window
             if (!IsDirectoryAccessible(dialog.SelectedPath))
             {
                 MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // make sure download & install directory aren't the same
+            if (dialog.SelectedPath == InstallerSettings.InstallDirectory)
+            {
+                MessageBox.Show("Install & download directory cannot be the same!", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 return;
             }
 

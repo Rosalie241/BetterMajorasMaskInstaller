@@ -28,6 +28,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public bool Enabled { get; set; }
         /// <summary>
+        /// Whether this is an archive
+        /// </summary>
+        public bool Archive { get; set; }
+        /// <summary>
         /// Url(s) (url, filename, filesize, md5 hash)
         /// </summary>
         public List<UrlInfo> Urls { get; set; }

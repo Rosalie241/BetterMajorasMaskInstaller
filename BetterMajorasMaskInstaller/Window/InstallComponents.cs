@@ -96,10 +96,38 @@ namespace BetterMajorasMaskInstaller.Window
                 if (!component.Enabled)
                     continue;
 
-                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, component.Urls.First().FileName);
-
                 Log($"Installing {component.Name}...");
-                
+
+                // if it's not an archive, 
+                // just copy the file
+                if(!component.Archive)
+                {
+                    string sourceFile = Path.Combine(InstallerSettings.DownloadDirectory, 
+                        component.Files.First().Key);
+                    string targetFile = Path.Combine(InstallerSettings.InstallDirectory, 
+                        component.Files.First().Value);
+
+                    try
+                    {
+                        File.Copy(sourceFile, targetFile);
+                    }
+                    catch (Exception e)
+                    {
+                        Log($"Installing {component.Name} Failed");
+                        Log(e.Message);
+                        Log(e.StackTrace);
+                        return;
+                    }
+
+                    continue;
+                }
+
+                // if it's an archive, extract each file
+                // in the right location
+
+                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, 
+                    component.Urls.First().FileName);
+
                 using (ArchiveFile archive = new ArchiveFile(archiveFile, sevenZipExecutable))
                 {
                     foreach (KeyValuePair<string, string> extractFileInfo in component.Files)
@@ -109,27 +137,30 @@ namespace BetterMajorasMaskInstaller.Window
                             ChangeProgressBarValue(value);
                         };
 
-                        string targetFile = Path.Combine(InstallerSettings.InstallDirectory, extractFileInfo.Value);
+                        string targetFile = Path.Combine(InstallerSettings.InstallDirectory, 
+                            extractFileInfo.Value);
 
                         bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
 
-                        if (!extractSuccess)
-                        {
-                            Log($"Installing {component.Name} Failed");
+                        if (extractSuccess)
+                            continue;
 
-                            if (archive.Exception != null)
-                            {
-                                Log(archive.Exception.Message);
-                                Log(archive.Exception.StackTrace);
-                            }                          
-                            return;
+                        Log($"Installing {component.Name} Failed");
+
+                        if (archive.Exception != null)
+                        {
+                            Log(archive.Exception.Message);
+                            Log(archive.Exception.StackTrace);
                         }
+
+                        return;
                     }
                 }
             }
 
             Log("Completed");
 
+            // launch post-install screen
             LaunchCompleted();
         }
 

@@ -108,7 +108,7 @@ namespace BetterMajorasMaskInstaller.Window
             FolderBrowserDialog dialog = new FolderBrowserDialog
             {
                 ShowNewFolderButton = true,
-                Description = "MM HD Install Directory"
+                Description = "Project64 Install Directory"
             };
 
             // return when cancelled

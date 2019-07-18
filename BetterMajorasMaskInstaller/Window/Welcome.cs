@@ -36,58 +36,21 @@ namespace BetterMajorasMaskInstaller.Window
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
         private void ContinueButton_Click(object sender, EventArgs e)
         {
-            InstallerSettings.InstallDirectory = InstallDirectoryTextBox.Text;
-            InstallerSettings.DownloadDirectory = DownloadDirectoryTextBox.Text;
+            InstallerSettings.InstallDirectory = Path.GetFullPath(InstallDirectoryTextBox.Text);
+            InstallerSettings.DownloadDirectory = Path.GetFullPath(DownloadDirectoryTextBox.Text);
 
             // change download directory when install & download directory 
             // are the same
-            if(InstallerSettings.InstallDirectory == InstallerSettings.DownloadDirectory)
-            {
-                InstallerSettings.DownloadDirectory = Path.Combine(InstallerSettings.DownloadDirectory, 
+            if (InstallerSettings.InstallDirectory == 
+                InstallerSettings.DownloadDirectory)
+                InstallerSettings.DownloadDirectory = Path.Combine(InstallerSettings.DownloadDirectory,
                     "download_cache");
-            }
 
-            if(!Directory.Exists(InstallerSettings.DownloadDirectory))
-            {
-                DialogResult result = MessageBox.Show("Download directory doesn't exist, do you want it to be created?", 
-                    "Info",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                if (result != DialogResult.Yes)
-                    return;
-
-                try
-                {
-                    Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
-                }
-                catch(Exception)
-                {
-                    MessageBox.Show("Failed to create download directory", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
-
-            if (!Directory.Exists(InstallerSettings.InstallDirectory))
-            {
-                DialogResult result = MessageBox.Show("Install directory doesn't exist, do you want it to be created?",
-                   "Info",
-                   MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                if (result != DialogResult.Yes)
-                    return;
-
-                try
-                {
-                    Directory.CreateDirectory(InstallerSettings.InstallDirectory);
-                }
-                catch(Exception)
-                {
-                    MessageBox.Show("Failed to create install directory", "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            }
+            // ask the user if they want to create the download & install directory
+            // if they don't exist yet
+            if (!AskCreateDirectory("Download", InstallerSettings.DownloadDirectory) ||
+                !AskCreateDirectory("Install", InstallerSettings.InstallDirectory))
+                return;
 
             // fetch configuration file
             try
@@ -96,7 +59,7 @@ namespace BetterMajorasMaskInstaller.Window
                                                     new WebClient().DownloadString(
                                                         InstallerSettings.ConfigurationUrl));
             }
-            catch(Exception)
+            catch (Exception)
             {
                 MessageBox.Show("Failed to fetch configuration file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -106,12 +69,12 @@ namespace BetterMajorasMaskInstaller.Window
             long diskSpaceRequired = 0;
 
             // calculate disk space required in mb
-            foreach(InstallerComponent component in InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerComponents.Components)
             {
                 foreach (int size in component.Urls.Select(x => x.FileSize))
                     diskSpaceRequired += size / 1024 / 1024 * 4;
             }
-            
+
             // verify disk space in mb
             foreach (DriveInfo driveInfo in new DriveInfo[] {
                 new DriveInfo(InstallerSettings.DownloadDirectory),
@@ -123,7 +86,7 @@ namespace BetterMajorasMaskInstaller.Window
                     return;
                 }
             }
-           
+
             this.Hide();
 
             new SelectInstallComponents(InstallerComponents)
@@ -134,6 +97,35 @@ namespace BetterMajorasMaskInstaller.Window
         }
         private void Welcome_Closing(object sender, CancelEventArgs args) => Application.Exit();
 
+        /// <summary>
+        /// when the directory doesn't exist yet, ask the user if they want to create it
+        /// </summary>
+        private bool AskCreateDirectory(string directoryName, string directory)
+        {
+            // return when the directory already exists
+            if (Directory.Exists(directory))
+                return true;
+
+            DialogResult result = MessageBox.Show($"{directoryName} directory doesn't exist, do you want it to be created?",
+                   "Info",
+                   MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+            if (result != DialogResult.Yes)
+                return false;
+
+            try
+            {
+                Directory.CreateDirectory(directory);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show($"Failed to create {directoryName} directory", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            return true;
+        }
         /// <summary>
         /// Checks whether we can write to the given directory
         /// </summary>

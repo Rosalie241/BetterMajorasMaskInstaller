@@ -109,7 +109,7 @@ namespace BetterMajorasMaskInstaller.Window
 
                     try
                     {
-                        File.Copy(sourceFile, targetFile);
+                        File.Copy(sourceFile, targetFile, true);
                     }
                     catch (Exception e)
                     {

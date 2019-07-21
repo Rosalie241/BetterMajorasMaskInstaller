@@ -17,7 +17,6 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Windows.Forms;
 
@@ -66,28 +65,6 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 MessageBox.Show("Failed to fetch configuration file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-            }
-
-            // disk space in mb
-            long diskSpaceRequired = 0;
-
-            // calculate disk space required in mb
-            foreach (InstallerComponent component in InstallerComponents.Components)
-            {
-                foreach (int size in component.Urls.Select(x => x.FileSize))
-                    diskSpaceRequired += size / 1024 / 1024 * 4;
-            }
-
-            // verify disk space in mb
-            foreach (DriveInfo driveInfo in new DriveInfo[] {
-                new DriveInfo(InstallerSettings.DownloadDirectory),
-                new DriveInfo(InstallerSettings.InstallDirectory)})
-            {
-                if ((driveInfo.TotalFreeSpace / 1024 / 1024) <= diskSpaceRequired)
-                {
-                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
             }
 
             this.Hide();

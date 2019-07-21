@@ -56,7 +56,7 @@
             // 
             // LicenseBox
             // 
-            this.LicenseBox.Cursor = System.Windows.Forms.Cursors.No;
+            this.LicenseBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.LicenseBox.Location = new System.Drawing.Point(81, 20);
             this.LicenseBox.Multiline = true;
             this.LicenseBox.Name = "LicenseBox";

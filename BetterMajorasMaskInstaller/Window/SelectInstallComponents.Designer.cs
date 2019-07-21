@@ -55,6 +55,7 @@
             // 
             // InstallComponentsList
             // 
+            this.InstallComponentsList.CheckOnClick = true;
             this.InstallComponentsList.FormattingEnabled = true;
             this.InstallComponentsList.Location = new System.Drawing.Point(81, 20);
             this.InstallComponentsList.Name = "InstallComponentsList";

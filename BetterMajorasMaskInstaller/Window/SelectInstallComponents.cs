@@ -15,6 +15,8 @@
 
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BetterMajorasMaskInstaller.Window
@@ -76,9 +78,51 @@ namespace BetterMajorasMaskInstaller.Window
 
         private void InstallButton_Click(object sender, EventArgs e)
         {
+            // download disk space required in bytes
+            // we start with 1gb to make sure it has at least 1 gb available
+            long downloadDiskSpaceRequired = 1024;
+            long installDiskSpaceRequired = 0;
+
+            // calculate disk space required in mb
+            foreach (InstallerComponent component in InstallerComponents.Components)
+            {
+                // skip item when it's disabled
+                if (!component.Enabled)
+                    continue;
+
+                foreach (int size in component.Urls.Select(x => x.FileSize))
+                {
+                    downloadDiskSpaceRequired += size / 1024 / 1024;
+                    // make sure we're 'safe' with the install size
+                    installDiskSpaceRequired += (size / 1024 / 1024) * 2;
+                }
+            }
+
+            DriveInfo downloadDriveInfo = new DriveInfo(InstallerSettings.DownloadDirectory);
+            DriveInfo installDriveInfo = new DriveInfo(InstallerSettings.InstallDirectory);
+
+            // verify download directory drive in mb
+            if((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
+            {
+                MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // verify install directory drive in mb
+            if((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
+            {
+                MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             this.Hide();
-            new DownloadInstallComponents() { InstallerComponents = InstallerComponents,
-                StartPosition = FormStartPosition.Manual, Location = this.Location }.Show();
+
+            new DownloadInstallComponents()
+            {
+                InstallerComponents = InstallerComponents,
+                StartPosition = FormStartPosition.Manual,
+                Location = this.Location
+            }.Show();
         }
         private void SelectInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }

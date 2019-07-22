@@ -34,6 +34,8 @@
             this.ChangeInstallDirectoryButton = new System.Windows.Forms.Button();
             this.DownloadDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.ChangeDownloadDirectoryButton = new System.Windows.Forms.Button();
+            this.ConfigurationUrlTextBox = new System.Windows.Forms.TextBox();
+            this.DeveloperModeCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ContinueButton
@@ -90,11 +92,32 @@
             this.ChangeDownloadDirectoryButton.UseVisualStyleBackColor = true;
             this.ChangeDownloadDirectoryButton.Click += new System.EventHandler(this.ChangeDownloadDirectoryButton_Click);
             // 
+            // ConfigurationUrlTextBox
+            // 
+            this.ConfigurationUrlTextBox.Location = new System.Drawing.Point(12, 66);
+            this.ConfigurationUrlTextBox.Name = "ConfigurationUrlTextBox";
+            this.ConfigurationUrlTextBox.Size = new System.Drawing.Size(398, 20);
+            this.ConfigurationUrlTextBox.TabIndex = 6;
+            this.ConfigurationUrlTextBox.Visible = false;
+            // 
+            // DeveloperModeCheckBox
+            // 
+            this.DeveloperModeCheckBox.AutoSize = true;
+            this.DeveloperModeCheckBox.Location = new System.Drawing.Point(12, 303);
+            this.DeveloperModeCheckBox.Name = "DeveloperModeCheckBox";
+            this.DeveloperModeCheckBox.Size = new System.Drawing.Size(105, 17);
+            this.DeveloperModeCheckBox.TabIndex = 7;
+            this.DeveloperModeCheckBox.Text = "Developer Mode";
+            this.DeveloperModeCheckBox.UseVisualStyleBackColor = true;
+            this.DeveloperModeCheckBox.CheckedChanged += new System.EventHandler(this.DeveloperModeCheckBox_CheckedChanged);
+            // 
             // Welcome
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 361);
+            this.Controls.Add(this.DeveloperModeCheckBox);
+            this.Controls.Add(this.ConfigurationUrlTextBox);
             this.Controls.Add(this.ChangeDownloadDirectoryButton);
             this.Controls.Add(this.DownloadDirectoryTextBox);
             this.Controls.Add(this.ChangeInstallDirectoryButton);
@@ -122,5 +145,7 @@
         private System.Windows.Forms.Button ChangeInstallDirectoryButton;
         private System.Windows.Forms.TextBox DownloadDirectoryTextBox;
         private System.Windows.Forms.Button ChangeDownloadDirectoryButton;
+        private System.Windows.Forms.TextBox ConfigurationUrlTextBox;
+        private System.Windows.Forms.CheckBox DeveloperModeCheckBox;
     }
 }

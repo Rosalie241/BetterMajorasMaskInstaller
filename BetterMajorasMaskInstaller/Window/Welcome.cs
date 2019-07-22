@@ -30,6 +30,8 @@ namespace BetterMajorasMaskInstaller.Window
 
             InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory;
             DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory;
+            ConfigurationUrlTextBox.Text = InstallerSettings.ConfigurationUrl;
+            DeveloperModeCheckBox.Checked = InstallerSettings.DeveloperMode;
         }
         public InstallerComponents InstallerComponents { get; set; }
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
@@ -37,6 +39,7 @@ namespace BetterMajorasMaskInstaller.Window
         {
             InstallerSettings.InstallDirectory = Path.GetFullPath(InstallDirectoryTextBox.Text);
             InstallerSettings.DownloadDirectory = Path.GetFullPath(DownloadDirectoryTextBox.Text);
+            InstallerSettings.ConfigurationUrl = ConfigurationUrlTextBox.Text;
 
             // change download directory when install & download directory 
             // are the same
@@ -54,7 +57,7 @@ namespace BetterMajorasMaskInstaller.Window
             // fetch configuration file
             try
             {
-                if (InstallerComponents == null)
+                if (InstallerComponents == null || InstallerSettings.DeveloperMode)
                 {
                     InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
                                                         new WebClient().DownloadString(
@@ -195,6 +198,12 @@ namespace BetterMajorasMaskInstaller.Window
 
             DownloadDirectoryTextBox.Text =
                 InstallerSettings.DownloadDirectory = dialog.SelectedPath;
+        }
+
+        private void DeveloperModeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ConfigurationUrlTextBox.Visible = 
+                InstallerSettings.DeveloperMode = DeveloperModeCheckBox.Checked;
         }
     }
 }

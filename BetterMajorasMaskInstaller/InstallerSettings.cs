@@ -38,5 +38,9 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public static string ConfigurationUrl = 
             "https://raw.githubusercontent.com/tim241/BetterMajorasMaskInstaller-cfg/master/config.json";
+        /// <summary>
+        /// Whether DeveloperMode has been enabled
+        /// </summary>
+        public static bool DeveloperMode = false;
     }
 }

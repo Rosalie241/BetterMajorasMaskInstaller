@@ -70,7 +70,7 @@ namespace SevenZipSharp
 
             string line = args.Data;
 
-            // add to output :)
+            // add to stdout to StandardOut :)
             StandardOutput.Add(line);
 
             if (line == null)
@@ -89,10 +89,7 @@ namespace SevenZipSharp
 
             // ignore data if it's useless for us
             if (!line.Contains("%") || !line.Contains("-"))
-            {
-
                 return;
-            }
 
             // extract percentage from line
             string percentageString = null;

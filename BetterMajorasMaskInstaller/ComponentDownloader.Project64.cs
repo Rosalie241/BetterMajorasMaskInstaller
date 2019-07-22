@@ -68,7 +68,11 @@ namespace BetterMajorasMaskInstaller
                 string url = GetLatestNightlyUrl();
 
                 if (url == null)
-                    throw new Exception("Couldn't find latest nightly URL!");
+                {
+                    Exception = new Exception("Failed to get latest nightly URL!");
+                    Failed = true;
+                    return;
+                }
 
                 Client.DownloadFileAsync(new System.Uri(url), fileName);
 

@@ -60,35 +60,35 @@
             // 
             // InstallDirectoryTextBox
             // 
-            this.InstallDirectoryTextBox.Location = new System.Drawing.Point(12, 12);
+            this.InstallDirectoryTextBox.Location = new System.Drawing.Point(12, 40);
             this.InstallDirectoryTextBox.Name = "InstallDirectoryTextBox";
-            this.InstallDirectoryTextBox.Size = new System.Drawing.Size(398, 20);
+            this.InstallDirectoryTextBox.Size = new System.Drawing.Size(350, 20);
             this.InstallDirectoryTextBox.TabIndex = 2;
             // 
             // ChangeInstallDirectoryButton
             // 
-            this.ChangeInstallDirectoryButton.Location = new System.Drawing.Point(416, 11);
+            this.ChangeInstallDirectoryButton.Location = new System.Drawing.Point(368, 39);
             this.ChangeInstallDirectoryButton.Name = "ChangeInstallDirectoryButton";
-            this.ChangeInstallDirectoryButton.Size = new System.Drawing.Size(156, 21);
+            this.ChangeInstallDirectoryButton.Size = new System.Drawing.Size(204, 21);
             this.ChangeInstallDirectoryButton.TabIndex = 3;
-            this.ChangeInstallDirectoryButton.Text = "Change Install Directory";
+            this.ChangeInstallDirectoryButton.Text = "Change Project64 Install Directory";
             this.ChangeInstallDirectoryButton.UseVisualStyleBackColor = true;
             this.ChangeInstallDirectoryButton.Click += new System.EventHandler(this.ChangeInstallDirectoryButton_Click);
             // 
             // DownloadDirectoryTextBox
             // 
-            this.DownloadDirectoryTextBox.Location = new System.Drawing.Point(13, 39);
+            this.DownloadDirectoryTextBox.Location = new System.Drawing.Point(12, 12);
             this.DownloadDirectoryTextBox.Name = "DownloadDirectoryTextBox";
-            this.DownloadDirectoryTextBox.Size = new System.Drawing.Size(397, 20);
+            this.DownloadDirectoryTextBox.Size = new System.Drawing.Size(350, 20);
             this.DownloadDirectoryTextBox.TabIndex = 4;
             // 
             // ChangeDownloadDirectoryButton
             // 
-            this.ChangeDownloadDirectoryButton.Location = new System.Drawing.Point(416, 39);
+            this.ChangeDownloadDirectoryButton.Location = new System.Drawing.Point(368, 12);
             this.ChangeDownloadDirectoryButton.Name = "ChangeDownloadDirectoryButton";
-            this.ChangeDownloadDirectoryButton.Size = new System.Drawing.Size(156, 21);
+            this.ChangeDownloadDirectoryButton.Size = new System.Drawing.Size(204, 21);
             this.ChangeDownloadDirectoryButton.TabIndex = 5;
-            this.ChangeDownloadDirectoryButton.Text = "Change Download Directory";
+            this.ChangeDownloadDirectoryButton.Text = "Change Temporary Download Directory";
             this.ChangeDownloadDirectoryButton.UseVisualStyleBackColor = true;
             this.ChangeDownloadDirectoryButton.Click += new System.EventHandler(this.ChangeDownloadDirectoryButton_Click);
             // 
@@ -96,7 +96,7 @@
             // 
             this.ConfigurationUrlTextBox.Location = new System.Drawing.Point(12, 66);
             this.ConfigurationUrlTextBox.Name = "ConfigurationUrlTextBox";
-            this.ConfigurationUrlTextBox.Size = new System.Drawing.Size(398, 20);
+            this.ConfigurationUrlTextBox.Size = new System.Drawing.Size(560, 20);
             this.ConfigurationUrlTextBox.TabIndex = 6;
             this.ConfigurationUrlTextBox.Visible = false;
             // 

@@ -171,7 +171,7 @@ namespace BetterMajorasMaskInstaller.Window
             FolderBrowserDialog dialog = new FolderBrowserDialog()
             {
                 ShowNewFolderButton = true,
-                Description = "Download Cache Directory"
+                Description = "Temporary Download Directory"
             };
 
             // return when cancelled

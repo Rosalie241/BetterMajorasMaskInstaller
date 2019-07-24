@@ -62,9 +62,9 @@
             this.TemporaryFilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.TemporaryFilesCheckBox.Location = new System.Drawing.Point(12, 36);
             this.TemporaryFilesCheckBox.Name = "TemporaryFilesCheckBox";
-            this.TemporaryFilesCheckBox.Size = new System.Drawing.Size(136, 17);
+            this.TemporaryFilesCheckBox.Size = new System.Drawing.Size(215, 17);
             this.TemporaryFilesCheckBox.TabIndex = 2;
-            this.TemporaryFilesCheckBox.Text = "Remove temporary files";
+            this.TemporaryFilesCheckBox.Text = "Remove Temporary Download Directory";
             this.TemporaryFilesCheckBox.UseVisualStyleBackColor = true;
             // 
             // Completed
@@ -76,12 +76,12 @@
             this.Controls.Add(this.DesktopShortcutCheckBox);
             this.Controls.Add(this.QuitButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Welcome_Closing);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Completed";
             this.ShowIcon = false;
             this.Text = "Completed";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Welcome_Closing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -46,12 +46,12 @@ namespace BetterMajorasMaskInstaller.Window
             if (InstallerSettings.InstallDirectory == 
                 InstallerSettings.DownloadDirectory)
                 InstallerSettings.DownloadDirectory = Path.Combine(InstallerSettings.DownloadDirectory,
-                    "download_cache");
+                    "temporary_download_cache");
 
             // ask the user if they want to create the download & install directory
             // if they don't exist yet
-            if (!AskCreateDirectory("Download", InstallerSettings.DownloadDirectory) ||
-                !AskCreateDirectory("Install", InstallerSettings.InstallDirectory))
+            if (!AskCreateDirectory("Temporary Download", InstallerSettings.DownloadDirectory) ||
+                !AskCreateDirectory("Project64 Install", InstallerSettings.InstallDirectory))
                 return;
 
             // fetch configuration file
@@ -158,7 +158,7 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory 
                     = Path.Combine(InstallerSettings.DownloadDirectory,
-                    "download_cache");
+                    "temporary_download_cache");
                 Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
             }
 
@@ -185,7 +185,7 @@ namespace BetterMajorasMaskInstaller.Window
             // make sure download & install directory aren't the same
             if (dialog.SelectedPath == InstallerSettings.InstallDirectory)
             {
-                dialog.SelectedPath = Path.Combine(dialog.SelectedPath, "download_cache");
+                dialog.SelectedPath = Path.Combine(dialog.SelectedPath, "temporary_download_cache");
                 Directory.CreateDirectory(dialog.SelectedPath);
             }
 

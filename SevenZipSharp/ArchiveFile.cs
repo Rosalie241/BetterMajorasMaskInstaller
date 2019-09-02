@@ -32,10 +32,6 @@ namespace SevenZipSharp
         /// </summary>
         public string SevenZipExecutable { get; set; }
         /// <summary>
-        /// 7za process
-        /// </summary>
-        private Process Process { get; set; }
-        /// <summary>
         /// Event which fires when the extraction progress changes
         /// </summary>
         public ProgressChangedEventHandler OnProgressChange { get; set; }
@@ -43,7 +39,6 @@ namespace SevenZipSharp
         {
             this.ArchiveFileName = fileName;
             this.SevenZipExecutable = sevenZipExecutable;
-            this.Process = new Process();
 
             if (!File.Exists(SevenZipExecutable))
                 throw new Exception("Can't find 7za!");
@@ -149,30 +144,33 @@ namespace SevenZipSharp
         {
             try
             {
-                Process.StartInfo = new ProcessStartInfo
+                using (Process process = new Process())
                 {
-                    FileName = SevenZipExecutable,
-                    Arguments = arguments,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                };
+                    process.StartInfo = new ProcessStartInfo
+                    {
+                        FileName = SevenZipExecutable,
+                        Arguments = arguments,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    };
 
-                Process.OutputDataReceived += OnOutputDataReceived;
+                    process.OutputDataReceived += OnOutputDataReceived;
 
-                // add stderr to ErrorOutput
-                Process.ErrorDataReceived += (object sender, DataReceivedEventArgs args) =>
-                {
-                    ErrorOutput.Add(args.Data);
-                };
+                    // add stderr to ErrorOutput
+                    process.ErrorDataReceived += (object sender, DataReceivedEventArgs args) =>
+                    {
+                        ErrorOutput.Add(args.Data);
+                    };
 
-                Process.Start();
-                Process.BeginOutputReadLine();
-                Process.BeginErrorReadLine();
-                Process.WaitForExit();
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    process.WaitForExit();
 
-                return Process.ExitCode == 0;
+                    return process.ExitCode == 0;
+                }
             }
             catch (Exception e)
             {
@@ -189,16 +187,6 @@ namespace SevenZipSharp
             // clear Lists
             StandardOutput.Clear();
             ErrorOutput.Clear();
-
-            try
-            {
-                // kill the 7za process
-                Process.Kill();
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
 
             GC.SuppressFinalize(this);
         }

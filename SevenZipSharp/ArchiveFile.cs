@@ -190,8 +190,15 @@ namespace SevenZipSharp
             StandardOutput.Clear();
             ErrorOutput.Clear();
 
-            // kill the 7za process
-            Process.Kill();
+            try
+            {
+                // kill the 7za process
+                Process.Kill();
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
 
             GC.SuppressFinalize(this);
         }

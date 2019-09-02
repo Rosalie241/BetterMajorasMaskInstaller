@@ -126,6 +126,12 @@ namespace BetterMajorasMaskInstaller
                 // and wait for the WebClient to be done
                 try
                 {
+                    // since windows 7 is throwing this exception:
+                    // "The request was aborted: Could not create SSL/TLS secure channel."
+                    // we know that it's trying to use a wrong encryption type(possibly tls 1)
+                    // so we'll configure it to use *everything* except tls 1
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
                     Client.DownloadFileAsync(new Uri(url), file);
 
                     // we use Thread.Sleep here because

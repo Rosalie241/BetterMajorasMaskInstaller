@@ -24,6 +24,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Description
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// Whether this component is enabled
         /// </summary>
         public bool Enabled { get; set; }

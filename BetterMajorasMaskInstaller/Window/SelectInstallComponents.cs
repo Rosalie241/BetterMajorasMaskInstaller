@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace BetterMajorasMaskInstaller.Window
     {
         public InstallerComponents InstallerComponents { get; set; }
 
+        private List<string> DescriptionList = new List<string>();
+
         public SelectInstallComponents(InstallerComponents installerComponents)
         {
             InitializeComponent();
@@ -35,10 +38,12 @@ namespace BetterMajorasMaskInstaller.Window
 
             // readonly 'placeholder' item
             InstallComponentsList.Items.Add("Project64", CheckState.Indeterminate);
+            DescriptionList.Add("N64 Emulator");
 
             foreach (InstallerComponent component in InstallerComponents.Components)
             {
                 InstallComponentsList.Items.Add(component.Name, component.Enabled);
+                DescriptionList.Add(component.Description);
             }
         }
 
@@ -103,7 +108,6 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             InstallButton.Enabled = true;
-
         }
 
         private void InstallButton_Click(object sender, EventArgs e)
@@ -153,6 +157,20 @@ namespace BetterMajorasMaskInstaller.Window
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location
             }.Show();
+        }
+
+        private int ToolTipIndex;
+        private void InstallComponentsList_ShowToolTip(object source, MouseEventArgs args)
+        {
+            int newIndex = InstallComponentsList.IndexFromPoint(args.Location); 
+           
+            if (ToolTipIndex == newIndex
+                || newIndex == -1)
+                return;
+
+            ToolTipIndex = newIndex;
+
+            InstallerComponentToolTip.SetToolTip(InstallComponentsList, DescriptionList[ToolTipIndex]);
         }
         private void SelectInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }

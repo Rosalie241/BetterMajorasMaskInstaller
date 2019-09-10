@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.InstallButton = new System.Windows.Forms.Button();
             this.QuitButton = new System.Windows.Forms.Button();
             this.InstallComponentsList = new System.Windows.Forms.CheckedListBox();
+            this.InstallerComponentToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // InstallButton
@@ -62,6 +64,7 @@
             this.InstallComponentsList.Size = new System.Drawing.Size(420, 289);
             this.InstallComponentsList.TabIndex = 2;
             this.InstallComponentsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.InstallComponentsList_ItemCheck);
+            this.InstallComponentsList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.InstallComponentsList_ShowToolTip);
             // 
             // SelectInstallComponents
             // 
@@ -88,5 +91,6 @@
         private System.Windows.Forms.Button InstallButton;
         private System.Windows.Forms.Button QuitButton;
         private System.Windows.Forms.CheckedListBox InstallComponentsList;
+        private System.Windows.Forms.ToolTip InstallerComponentToolTip;
     }
 }

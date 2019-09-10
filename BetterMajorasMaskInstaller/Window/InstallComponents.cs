@@ -89,6 +89,10 @@ namespace BetterMajorasMaskInstaller.Window
                 }
             }
 
+            // store the patches for later
+            // we'll apply them when everything is installed
+            Dictionary<string, KeyValuePair<string, string>> patchList = new Dictionary<string, KeyValuePair<string, string>>();
+
             foreach (InstallerComponent component in InstallerComponents.Components)
             {
                 // if it's disabled,
@@ -97,6 +101,14 @@ namespace BetterMajorasMaskInstaller.Window
                     continue;
 
                 Log($"Installing {component.Name}...");
+
+                if (component.Patches != null)
+                {
+                    // store patches in a dictionary, 
+                    // we're gonna execute them when everything is installed
+                    foreach (KeyValuePair<string, KeyValuePair<string, string>> patch in component.Patches)
+                        patchList.Add(patch.Key, patch.Value);
+                }
 
                 // if it's not an archive, 
                 // just copy the file
@@ -156,6 +168,27 @@ namespace BetterMajorasMaskInstaller.Window
                         return;
                     }
                 }
+            }
+
+            // execute the 'patches'
+            // these 'patches' only allow us to replace text
+            // so just read the file, replace the text and write the file
+            try
+            {
+                foreach (KeyValuePair<string, KeyValuePair<string, string>> patch in patchList)
+                {
+                    string file = Path.Combine(InstallerSettings.InstallDirectory, patch.Key);
+
+                    File.WriteAllText(file, File.ReadAllText(file)
+                                                .Replace(patch.Value.Key, patch.Value.Value));
+                }
+            }
+            catch(Exception e)
+            {
+                Log("Patching Failed");
+                Log(e.Message);
+                Log(e.StackTrace);
+                return;
             }
 
             Log("Completed");

@@ -28,6 +28,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public bool Enabled { get; set; }
         /// <summary>
+        /// What components need to be disabled when this one is selected
+        /// </summary>
+        public List<string> DisableOnSelected { get; set; }
+        /// <summary>
         /// Whether this is an archive
         /// </summary>
         public bool Archive { get; set; }
@@ -39,5 +43,9 @@ namespace BetterMajorasMaskInstaller
         /// Files (source, target)
         /// </summary>
         public Dictionary<string, string> Files { get; set; }
+        /// <summary>
+        /// Patches (file, source text, replacement text)
+        /// </summary>
+        public Dictionary<string, KeyValuePair<string, string>> Patches { get; set; }
     }
 }

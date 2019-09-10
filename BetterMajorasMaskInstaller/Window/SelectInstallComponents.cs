@@ -62,14 +62,44 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            foreach(InstallerComponent component in InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerComponents.Components)
             {
-                if (component.Name ==
+                // skip the component if it's not the one we need
+                if (component.Name !=
                     InstallComponentsList.Items[e.Index].ToString())
-                {
-                    component.Enabled = e.NewValue == CheckState.Checked;
+                    continue;
+
+                component.Enabled = e.NewValue == CheckState.Checked;
+
+                // break if the DisableOnSelected list doesn't exist,
+                // or if we're not getting checked
+                if (component.DisableOnSelected == null 
+                    || e.NewValue != CheckState.Checked)
                     break;
+
+                // disable required components
+                foreach (string dComponent in component.DisableOnSelected)
+                {
+                    foreach (InstallerComponent c in InstallerComponents.Components)
+                    {
+                        // skip if not required
+                        if (c.Name != dComponent)
+                            continue;
+
+                        // disable component
+                        c.Enabled = false;
+
+                        int dComponentIndex = InstallComponentsList.FindStringExact(dComponent);
+
+                        // break when not found
+                        if (dComponentIndex == -1)
+                            break;
+
+                        InstallComponentsList.SetItemCheckState(dComponentIndex, CheckState.Unchecked);
+                    }
                 }
+
+                break;
             }
 
             InstallButton.Enabled = true;

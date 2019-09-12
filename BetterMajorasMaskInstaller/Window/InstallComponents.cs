@@ -91,7 +91,8 @@ namespace BetterMajorasMaskInstaller.Window
 
             // store the patches for later
             // we'll apply them when everything is installed
-            Dictionary<string, KeyValuePair<string, string>> patchList = new Dictionary<string, KeyValuePair<string, string>>();
+            Dictionary<string, KeyValuePair<string, string>> patchList 
+                = new Dictionary<string, KeyValuePair<string, string>>();
 
             foreach (InstallerComponent component in InstallerComponents.Components)
             {
@@ -111,24 +112,27 @@ namespace BetterMajorasMaskInstaller.Window
                 }
 
                 // if it's not an archive, 
-                // just copy the file
+                // just copy the files
                 if(!component.Archive)
                 {
-                    string sourceFile = Path.Combine(InstallerSettings.DownloadDirectory, 
-                        component.Files.First().Key);
-                    string targetFile = Path.Combine(InstallerSettings.InstallDirectory, 
-                        component.Files.First().Value);
+                    foreach (KeyValuePair<string, string> cFiles in component.Files)
+                    {
+                        string sourceFile = Path.Combine(InstallerSettings.DownloadDirectory,
+                            cFiles.Key);
+                        string targetFile = Path.Combine(InstallerSettings.InstallDirectory,
+                            cFiles.Value);
 
-                    try
-                    {
-                        File.Copy(sourceFile, targetFile, true);
-                    }
-                    catch (Exception e)
-                    {
-                        Log($"Installing {component.Name} Failed");
-                        Log(e.Message);
-                        Log(e.StackTrace);
-                        return;
+                        try
+                        {
+                            File.Copy(sourceFile, targetFile, true);
+                        }
+                        catch (Exception e)
+                        {
+                            Log($"Installing {component.Name} Failed");
+                            Log(e.Message);
+                            Log(e.StackTrace);
+                            return;
+                        }
                     }
 
                     continue;

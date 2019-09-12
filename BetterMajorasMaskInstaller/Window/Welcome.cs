@@ -48,6 +48,14 @@ namespace BetterMajorasMaskInstaller.Window
                 InstallerSettings.DownloadDirectory = Path.Combine(InstallerSettings.DownloadDirectory,
                     "temporary_download_cache");
 
+            // make sure the installation directory is empty
+            if (!IsDirectoryEmpty(InstallerSettings.InstallDirectory))
+            {
+                MessageBox.Show("Please choose an empty installation directory", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             // ask the user if they want to create the download & install directory
             // if they don't exist yet
             if (!AskCreateDirectory("Temporary Download", InstallerSettings.DownloadDirectory) ||
@@ -108,6 +116,31 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             return true;
+        }
+        /// <summary>
+        /// Checks whether given directory is empty
+        /// </summary>
+        private bool IsDirectoryEmpty(string directory)
+        {
+            try
+            {
+                // we need to make sure that the download directory
+                // isn't inside the installation directory, if it is
+                // just ignore that 1 directory
+                int maxDirectoriesAllowed = 0;
+                if (InstallerSettings.DownloadDirectory ==
+                    Path.Combine(directory, "temporary_download_cache"))
+                    maxDirectoriesAllowed++;
+
+                DirectoryInfo dInfo = new DirectoryInfo(directory);
+
+                return dInfo.GetFiles().Length == 0 &&
+                    dInfo.GetDirectories().Length == maxDirectoriesAllowed;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
         }
         /// <summary>
         /// Checks whether we can write to the given directory

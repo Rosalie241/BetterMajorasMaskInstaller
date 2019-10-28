@@ -20,6 +20,6 @@ namespace BetterMajorasMaskInstaller
         public string Url { get; set; }
         public string FileName { get; set; }
         public string FileHash { get; set; }
-        public int FileSize { get; set; }
+        public long FileSize { get; set; }
     }
 }

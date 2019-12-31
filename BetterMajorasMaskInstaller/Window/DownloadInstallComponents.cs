@@ -36,14 +36,6 @@ namespace BetterMajorasMaskInstaller.Window
             double fileSize = 0;
             double bytesReceived = a.BytesReceived;
 
-            // when we've been given the percentage
-            // just use that and return
-            if (a.ProgressPercentage != null)
-            {
-                ChangeProgressBarValue((int)a.ProgressPercentage);
-                return;
-            }
-
             // get total filesize of *all* the files of the InstallComponent
             // then get the total download progress instead of the progress per file
             // and change the progressbar

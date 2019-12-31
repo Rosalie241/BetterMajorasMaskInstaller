@@ -8,8 +8,3 @@ This Installer installs & configures
 * [Azimer's Audio Plugin](https://github.com/Azimer/AziAudio/)
 * [Iconoclast's Static RSP Interpreter](https://github.com/cxd4/rsp)
 * [MM HD Texture Pack](http://www.emutalk.net/threads/56677-Majora-s-Mask-N64HD-Project)
-
-#### Building
-* Create Google API Key (make *sure* it has Google drive API access)
-* Add Google API Key to [BetterMajorasMaskInstaller/GoogleApiInformation.cs](BetterMajorasMaskInstaller/GoogleApiInformation.cs)
-* Open & Build in Visual Studio

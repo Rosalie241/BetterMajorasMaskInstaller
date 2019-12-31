@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading;
+using AppVeyorApi;
 
 namespace BetterMajorasMaskInstaller
 {
@@ -64,10 +65,10 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Verifies MD5 hash
         /// </summary>
-        private bool VerifyHash(string fileName, string fileHash)
+        private bool VerifyHash(string fileName, string fileHash, long fileSize)
         {
-            if (fileHash == null)
-                return true;
+            if (fileHash == null && fileName == null)
+                return false;
 
             if (!File.Exists(fileName))
                 return false;
@@ -76,6 +77,9 @@ namespace BetterMajorasMaskInstaller
             {
                 using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
                 {
+                    if (fileHash == null)
+                        return fileStream.Length == fileSize;
+
                     string md5Hash = BitConverter.ToString(md5.ComputeHash(fileStream))
                         .Replace("-", null)
                         .ToLower();
@@ -87,37 +91,40 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Downloads DownloadComponent in directory
         /// </summary>
-        public void DownloadComponent(InstallerComponent component, string directory)
+        public void DownloadComponent(ref InstallerComponent component, string directory)
         {
             ComponentDownloadIndex = -1;
             CurrentComponent = component;
 
             // loop over each URL and download it
-            foreach (UrlInfo urlInfo in component.Urls)
+            for(int i = 0; i < component.Urls.Count; i++)
             {
+                UrlInfo urlInfo = component.Urls[i];
+
                 ComponentDownloadIndex++;
 
+                // if it's an AppVeyor Url,
+                // use the AppVeyor API to get file information
+                // and change urlInfo according to that
+                if (IsAppVeyorUrl(urlInfo.Url))
+                {
+                    urlInfo = AppVeyorUrlInfo(urlInfo);
+
+                    // also update the actual InstallerComponent
+                    component.Urls[0] = urlInfo;
+                }
+
                 string url = urlInfo.Url;
-                string file = Path.Combine(directory, urlInfo.FileName);
+
+                string file = null;
+                if(urlInfo.FileName != null)
+                       file = Path.Combine(directory, urlInfo.FileName);
+
                 string hash = urlInfo.FileHash;
 
                 // if the hash matches, skip it
-                if (VerifyHash(file, hash))
+                if (VerifyHash(file, hash, urlInfo.FileSize))
                     continue;
-
-                // if the URL is a Google Drive URL,
-                // download it using the Google API
-                // and continue
-                if (IsGoogleDriveUrl(url))
-                {
-                    DownloadGoogleDriveFile(url, file, hash);
-
-                    // abort when failed
-                    if (Failed)
-                        return;
-
-                    continue;
-                }
 
                 // try to download the file using WebClient
                 // also verify the hash when it's done.
@@ -139,7 +146,7 @@ namespace BetterMajorasMaskInstaller
                     while (Client.IsBusy)
                         Thread.Sleep(10);
 
-                    Failed = !VerifyHash(file, hash);
+                    Failed = !VerifyHash(file, hash, urlInfo.FileSize);
                 }
                 catch (Exception e)
                 {

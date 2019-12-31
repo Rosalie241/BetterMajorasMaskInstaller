@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -108,8 +109,12 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            foreach (InstallerComponent component in InstallerComponents.Components)
+            List<InstallerComponent> components = InstallerComponents.Components;
+
+            for(int i = 0; i < components.Count; i++)
             {
+                InstallerComponent component = components[i];
+                
                 // if it's disabled,
                 // skip it
                 if (!component.Enabled)
@@ -117,7 +122,10 @@ namespace BetterMajorasMaskInstaller.Window
 
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
-                Downloader.DownloadComponent(component, InstallerSettings.DownloadDirectory);
+
+                Downloader.DownloadComponent(ref component, InstallerSettings.DownloadDirectory);
+
+                InstallerComponents.Components[i] = component;
 
                 if (Downloader.Failed)
                 {

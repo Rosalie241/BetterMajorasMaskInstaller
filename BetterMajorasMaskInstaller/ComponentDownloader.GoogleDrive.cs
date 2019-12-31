@@ -59,7 +59,7 @@ namespace BetterMajorasMaskInstaller
 
                             case DownloadStatus.Completed:
                                 fileStream.Close();
-                                Failed = !VerifyHash(fileName, fileHash);
+                                Failed = !VerifyHash(fileName, fileHash, 0);
                                 break;
                         }
 

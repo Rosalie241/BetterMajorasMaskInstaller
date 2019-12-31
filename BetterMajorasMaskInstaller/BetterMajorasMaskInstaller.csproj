@@ -38,27 +38,9 @@
   <!-- Custom ILMerge target -->
   <Target Name="ILMerge">
     <!-- the ILMergePath property points to the location of ILMerge.exe console application -->
-    <Exec Command="$(ILMergeConsolePath) bin\Release\BetterMajorasMaskInstaller.exe ^&#xD;&#xA;	/out:..\bin\BetterMajorasMaskInstaller.exe ^&#xD;&#xA;	/ndebug ^&#xD;&#xA;	bin\Release\Google.Apis.Auth.dll ^&#xD;&#xA;	bin\Release\Google.Apis.Auth.PlatformServices.dll ^&#xD;&#xA;	bin\Release\Google.Apis.Core.dll ^&#xD;&#xA;	bin\Release\Google.Apis.dll ^&#xD;&#xA;	bin\Release\Google.Apis.Drive.v3.dll ^&#xD;&#xA;	bin\Release\Google.Apis.PlatformServices.dll ^&#xD;&#xA;	bin\Release\Newtonsoft.Json.dll ^&#xD;&#xA;	bin\Release\SevenZipSharp.dll ^&#xD;&#xA; bin\Release\AppVeyorApi.dll" />
+    <Exec Command="$(ILMergeConsolePath) bin\Release\BetterMajorasMaskInstaller.exe /out:..\bin\BetterMajorasMaskInstaller.exe	/ndebug  bin\Release\Newtonsoft.Json.dll bin\Release\SevenZipSharp.dll bin\Release\AppVeyorApi.dll" />
   </Target>
   <ItemGroup>
-    <Reference Include="Google.Apis, Version=1.42.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.1.42.0\lib\net45\Google.Apis.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.Apis.Auth, Version=1.42.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Auth.1.42.0\lib\net45\Google.Apis.Auth.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.42.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Auth.1.42.0\lib\net45\Google.Apis.Auth.PlatformServices.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.Apis.Core, Version=1.42.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Core.1.42.0\lib\net45\Google.Apis.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.Apis.Drive.v3, Version=1.42.0.1750, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.Drive.v3.1.42.0.1750\lib\net45\Google.Apis.Drive.v3.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.Apis.PlatformServices, Version=1.42.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.1.42.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -79,10 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentDownloader.Appveyor.cs" />
-    <Compile Include="ComponentDownloader.GoogleDrive.cs" />
     <Compile Include="InstallerComponent.cs" />
     <Compile Include="InstallerComponents.cs" />
-    <Compile Include="GoogleApiInformation.cs" />
     <Compile Include="InstallerSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -37,6 +37,10 @@ namespace BetterMajorasMaskInstaller.Window
             double fileSize = 0;
             double bytesReceived = a.BytesReceived;
 
+            // when there's no component, return
+            if (Downloader.CurrentComponent == null)
+                return;
+
             // get total filesize of *all* the files of the InstallComponent
             // then get the total download progress instead of the progress per file
             // and change the progressbar

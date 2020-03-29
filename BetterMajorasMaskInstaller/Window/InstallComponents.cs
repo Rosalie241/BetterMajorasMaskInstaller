@@ -211,8 +211,6 @@ namespace BetterMajorasMaskInstaller.Window
 
             this.Hide();
 
-            new System.Media.SoundPlayer(Properties.Resources.MM_Notebook).Play();
-
             new Completed()
             {
                 StartPosition = FormStartPosition.Manual,

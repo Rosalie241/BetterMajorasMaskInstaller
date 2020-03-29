@@ -36,24 +36,24 @@
             // 
             this.InstallProgressBar.Location = new System.Drawing.Point(12, 326);
             this.InstallProgressBar.Name = "InstallProgressBar";
-            this.InstallProgressBar.Size = new System.Drawing.Size(560, 23);
+            this.InstallProgressBar.Size = new System.Drawing.Size(420, 23);
             this.InstallProgressBar.TabIndex = 0;
             // 
             // LogBox
             // 
-            this.LogBox.Location = new System.Drawing.Point(81, 20);
+            this.LogBox.Location = new System.Drawing.Point(12, 12);
             this.LogBox.Multiline = true;
             this.LogBox.Name = "LogBox";
             this.LogBox.ReadOnly = true;
             this.LogBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.LogBox.Size = new System.Drawing.Size(420, 300);
+            this.LogBox.Size = new System.Drawing.Size(420, 304);
             this.LogBox.TabIndex = 1;
             // 
             // InstallComponents
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 361);
+            this.ClientSize = new System.Drawing.Size(444, 361);
             this.Controls.Add(this.LogBox);
             this.Controls.Add(this.InstallProgressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

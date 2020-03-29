@@ -37,7 +37,7 @@
             // 
             // InstallButton
             // 
-            this.InstallButton.Location = new System.Drawing.Point(497, 326);
+            this.InstallButton.Location = new System.Drawing.Point(358, 326);
             this.InstallButton.Name = "InstallButton";
             this.InstallButton.Size = new System.Drawing.Size(75, 23);
             this.InstallButton.TabIndex = 0;
@@ -59,9 +59,9 @@
             // 
             this.InstallComponentsList.CheckOnClick = true;
             this.InstallComponentsList.FormattingEnabled = true;
-            this.InstallComponentsList.Location = new System.Drawing.Point(81, 20);
+            this.InstallComponentsList.Location = new System.Drawing.Point(12, 12);
             this.InstallComponentsList.Name = "InstallComponentsList";
-            this.InstallComponentsList.Size = new System.Drawing.Size(420, 289);
+            this.InstallComponentsList.Size = new System.Drawing.Size(420, 304);
             this.InstallComponentsList.TabIndex = 2;
             this.InstallComponentsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.InstallComponentsList_ItemCheck);
             this.InstallComponentsList.MouseMove += new System.Windows.Forms.MouseEventHandler(this.InstallComponentsList_ShowToolTip);
@@ -70,7 +70,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 361);
+            this.ClientSize = new System.Drawing.Size(444, 361);
             this.Controls.Add(this.InstallComponentsList);
             this.Controls.Add(this.QuitButton);
             this.Controls.Add(this.InstallButton);
@@ -80,7 +80,7 @@
             this.Name = "SelectInstallComponents";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Select Install Components";
+            this.Text = "Select Installation Components";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SelectInstallComponents_Closing);
             this.ResumeLayout(false);
 

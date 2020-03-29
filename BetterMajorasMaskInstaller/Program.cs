@@ -28,7 +28,7 @@ namespace BetterMajorasMaskInstaller
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Window.LicenseAgreement());
+            Application.Run(new Window.Welcome());
         }
     }
 }

@@ -238,8 +238,10 @@ namespace BetterMajorasMaskInstaller.Window
 
         private void DeveloperModeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            ConfigurationUrlTextBox.Visible = 
-                InstallerSettings.DeveloperMode = DeveloperModeCheckBox.Checked;
+            bool visible = InstallerSettings.DeveloperMode = DeveloperModeCheckBox.Checked;
+
+            ConfigurationUrlTextBox.Visible = visible;
+            ConfigurationUrlLabel.Visible = visible;
         }
     }
 }

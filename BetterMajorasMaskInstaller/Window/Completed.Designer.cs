@@ -35,7 +35,7 @@
             // 
             // QuitButton
             // 
-            this.QuitButton.Location = new System.Drawing.Point(497, 326);
+            this.QuitButton.Location = new System.Drawing.Point(358, 326);
             this.QuitButton.Name = "QuitButton";
             this.QuitButton.Size = new System.Drawing.Size(75, 23);
             this.QuitButton.TabIndex = 0;
@@ -71,7 +71,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(584, 361);
+            this.ClientSize = new System.Drawing.Size(444, 361);
             this.Controls.Add(this.TemporaryFilesCheckBox);
             this.Controls.Add(this.DesktopShortcutCheckBox);
             this.Controls.Add(this.QuitButton);

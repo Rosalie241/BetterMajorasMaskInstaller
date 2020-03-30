@@ -58,7 +58,7 @@ namespace AppVeyorApi
 
             Artifact[] ret = JsonConvert.DeserializeObject<Artifact[]>(getApiData(url));
 
-            foreach(Artifact a in ret)
+            foreach (Artifact a in ret)
             {
                 a.Url = $"{url}/{a.FileName}";
                 a.FileName = Path.GetFileName(a.FileName);
@@ -84,9 +84,9 @@ namespace AppVeyorApi
                     // else just return the first artifact
                     if (artifactName != null)
                     {
-                        foreach(Jobs j in JsonConvert.DeserializeObject<BuildInfo>(getApiData(url2)).Build.Jobs)
+                        foreach (Jobs j in JsonConvert.DeserializeObject<BuildInfo>(getApiData(url2)).Build.Jobs)
                         {
-                            if(j.Name == artifactName)
+                            if (j.Name.Contains(artifactName))
                                 return j.JobId;
                         }
 

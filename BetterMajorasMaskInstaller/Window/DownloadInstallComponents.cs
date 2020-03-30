@@ -99,26 +99,12 @@ namespace BetterMajorasMaskInstaller.Window
             Downloader = new ComponentDownloader();
             Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
 
-            string project64FileName = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
-
-            // we *sadly* need to do something special for Project64
-            Log("Downloading Project64...");
-            Downloader.Project64(project64FileName);
-
-            if (Downloader.Failed)
-            {
-                Log("Downloading Project64 Failed");
-                Log(Downloader.Exception.Message);
-                Log(Downloader.Exception.StackTrace);
-                return;
-            }
-
             List<InstallerComponent> components = InstallerComponents.Components;
 
-            for(int i = 0; i < components.Count; i++)
+            for (int i = 0; i < components.Count; i++)
             {
                 InstallerComponent component = components[i];
-                
+
                 // if it's disabled,
                 // skip it
                 if (!component.Enabled)
@@ -151,7 +137,7 @@ namespace BetterMajorasMaskInstaller.Window
         }
         private void LaunchInstallComponents()
         {
-            if(this.InvokeRequired)
+            if (this.InvokeRequired)
             {
                 this.Invoke((MethodInvoker)delegate () { LaunchInstallComponents(); });
                 return;
@@ -166,7 +152,7 @@ namespace BetterMajorasMaskInstaller.Window
             }.Show();
         }
         private void Log(string text)
-        {   
+        {
             if (this.InvokeRequired)
                 this.Invoke((MethodInvoker)delegate () { Log(text); });
             else

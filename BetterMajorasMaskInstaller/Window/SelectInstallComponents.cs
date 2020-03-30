@@ -36,13 +36,13 @@ namespace BetterMajorasMaskInstaller.Window
             // so we set it here
             this.InstallerComponents = installerComponents;
 
-            // readonly 'placeholder' item
-            InstallComponentsList.Items.Add("Project64", CheckState.Indeterminate);
-            DescriptionList.Add("N64 Emulator");
-
             foreach (InstallerComponent component in InstallerComponents.Components)
             {
-                InstallComponentsList.Items.Add(component.Name, component.Enabled);
+                int componentIndex = InstallComponentsList.Items.Add(component.Name, component.Enabled);
+
+                if (component.ReadOnly)
+                    InstallComponentsList.SetItemCheckState(componentIndex, CheckState.Indeterminate);
+
                 DescriptionList.Add(component.Description);
             }
         }
@@ -74,11 +74,11 @@ namespace BetterMajorasMaskInstaller.Window
                     InstallComponentsList.Items[e.Index].ToString())
                     continue;
 
-                component.Enabled = e.NewValue == CheckState.Checked;
+                component.Enabled = e.NewValue == CheckState.Checked || e.NewValue == CheckState.Indeterminate;
 
                 // break if the DisableOnSelected list doesn't exist,
                 // or if we're not getting checked
-                if (component.DisableOnSelected == null 
+                if (component.DisableOnSelected == null
                     || e.NewValue != CheckState.Checked)
                     break;
 
@@ -136,14 +136,14 @@ namespace BetterMajorasMaskInstaller.Window
             DriveInfo installDriveInfo = new DriveInfo(InstallerSettings.InstallDirectory);
 
             // verify download directory drive in mb
-            if((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
+            if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
             {
                 MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             // verify install directory drive in mb
-            if((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
+            if ((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
             {
                 MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -162,8 +162,8 @@ namespace BetterMajorasMaskInstaller.Window
         private int ToolTipIndex;
         private void InstallComponentsList_ShowToolTip(object source, MouseEventArgs args)
         {
-            int newIndex = InstallComponentsList.IndexFromPoint(args.Location); 
-           
+            int newIndex = InstallComponentsList.IndexFromPoint(args.Location);
+
             if (ToolTipIndex == newIndex
                 || newIndex == -1)
                 return;

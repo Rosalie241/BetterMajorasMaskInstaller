@@ -38,7 +38,7 @@ namespace BetterMajorasMaskInstaller
     partial class ComponentDownloader : IDisposable
     {
         private static WebClient Client { get; set; }
-        
+
         public DownloadStatusChangedEventHandler OnDownloadProgressChanged { get; set; }
         /// <summary>
         /// whether the download failed
@@ -97,7 +97,7 @@ namespace BetterMajorasMaskInstaller
             CurrentComponent = component;
 
             // loop over each URL and download it
-            for(int i = 0; i < component.Urls.Count; i++)
+            for (int i = 0; i < component.Urls.Count; i++)
             {
                 UrlInfo urlInfo = component.Urls[i];
 
@@ -108,17 +108,27 @@ namespace BetterMajorasMaskInstaller
                 // and change urlInfo according to that
                 if (IsAppVeyorUrl(urlInfo.Url))
                 {
-                    urlInfo = AppVeyorUrlInfo(urlInfo);
+                    try
+                    {
+                        urlInfo = AppVeyorUrlInfo(urlInfo);
+                    }
+                    catch (Exception e)
+                    {
+                        Exception = e;
+                        Failed = true;
+                        return;
+                    }
 
                     // also update the actual InstallerComponent
                     component.Urls[0] = urlInfo;
+                    CurrentComponent = component;
                 }
 
                 string url = urlInfo.Url;
 
                 string file = null;
-                if(urlInfo.FileName != null)
-                       file = Path.Combine(directory, urlInfo.FileName);
+                if (urlInfo.FileName != null)
+                    file = Path.Combine(directory, urlInfo.FileName);
 
                 string hash = urlInfo.FileHash;
 

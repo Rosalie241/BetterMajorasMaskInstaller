@@ -63,35 +63,9 @@ namespace BetterMajorasMaskInstaller.Window
                 File.WriteAllBytes(sevenZipExecutable, Properties.Resources._7za);
             }
 
-            // sadly we need to do something special for pj64
-            string project64File = Path.Combine(InstallerSettings.DownloadDirectory, "Project64.zip");
-
-            Log("Installing Project64...");
-
-            using (ArchiveFile archive = new ArchiveFile(project64File, sevenZipExecutable))
-            {
-                archive.OnProgressChange += (object source, int value) =>
-                {
-                    ChangeProgressBarValue(value);
-                };
-
-                bool extractSuccess = archive.ExtractAll(InstallerSettings.InstallDirectory);
-
-                if(!extractSuccess)
-                {
-                    Log("Installing Project64 Failed");
-                    if(archive.Exception != null)
-                    {
-                        Log(archive.Exception.Message);
-                        Log(archive.Exception.StackTrace);
-                    }
-                    return;
-                }
-            }
-
             // store the patches for later
             // we'll apply them when everything is installed
-            Dictionary<string, KeyValuePair<string, string>> patchList 
+            Dictionary<string, KeyValuePair<string, string>> patchList
                 = new Dictionary<string, KeyValuePair<string, string>>();
 
             foreach (InstallerComponent component in InstallerComponents.Components)
@@ -113,7 +87,7 @@ namespace BetterMajorasMaskInstaller.Window
 
                 // if it's not an archive, 
                 // just copy the files
-                if(!component.Archive)
+                if (!component.Archive)
                 {
                     foreach (KeyValuePair<string, string> cFiles in component.Files)
                     {
@@ -141,35 +115,55 @@ namespace BetterMajorasMaskInstaller.Window
                 // if it's an archive, extract each file
                 // in the right location
 
-                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, 
+                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory,
                     component.Urls.First().FileName);
 
                 using (ArchiveFile archive = new ArchiveFile(archiveFile, sevenZipExecutable))
                 {
-                    foreach (KeyValuePair<string, string> extractFileInfo in component.Files)
+                    if (component.ExtractAll)
                     {
-                        archive.OnProgressChange += (object source, int value) =>
+                        bool extractSuccess = archive.ExtractAll(InstallerSettings.InstallDirectory);
+
+                        if (!extractSuccess)
                         {
-                            ChangeProgressBarValue(value);
-                        };
+                            Log($"Installing {component.Name} Failed");
 
-                        string targetFile = Path.Combine(InstallerSettings.InstallDirectory, 
-                            extractFileInfo.Value);
+                            if (archive.Exception != null)
+                            {
+                                Log(archive.Exception.Message);
+                                Log(archive.Exception.StackTrace);
+                            }
 
-                        bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
-
-                        if (extractSuccess)
-                            continue;
-
-                        Log($"Installing {component.Name} Failed");
-
-                        if (archive.Exception != null)
-                        {
-                            Log(archive.Exception.Message);
-                            Log(archive.Exception.StackTrace);
+                            return;
                         }
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair<string, string> extractFileInfo in component.Files)
+                        {
+                            archive.OnProgressChange += (object source, int value) =>
+                            {
+                                ChangeProgressBarValue(value);
+                            };
 
-                        return;
+                            string targetFile = Path.Combine(InstallerSettings.InstallDirectory,
+                                extractFileInfo.Value);
+
+                            bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
+
+                            if (extractSuccess)
+                                continue;
+
+                            Log($"Installing {component.Name} Failed");
+
+                            if (archive.Exception != null)
+                            {
+                                Log(archive.Exception.Message);
+                                Log(archive.Exception.StackTrace);
+                            }
+
+                            return;
+                        }
                     }
                 }
             }
@@ -187,7 +181,7 @@ namespace BetterMajorasMaskInstaller.Window
                                                 .Replace(patch.Value.Key, patch.Value.Value));
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log("Patching Failed");
                 Log(e.Message);
@@ -203,7 +197,7 @@ namespace BetterMajorasMaskInstaller.Window
 
         public void LaunchCompleted()
         {
-            if(this.InvokeRequired)
+            if (this.InvokeRequired)
             {
                 this.Invoke((MethodInvoker)delegate () { LaunchCompleted(); });
                 return;

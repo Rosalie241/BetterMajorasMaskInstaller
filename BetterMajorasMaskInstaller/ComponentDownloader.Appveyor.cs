@@ -20,6 +20,14 @@ namespace BetterMajorasMaskInstaller
             string branch = "master";
             string artifactFileName = null;
 
+            // we can use 'appveyor:example/project#Win32'
+            // to find an artifact which contains 'Win32'
+            if (urlInfo.Url.Contains("#"))
+            {
+                artifactFileName = urlInfo.Url.Split('#')[1];
+                project = project.Split('#')[0];
+            }
+
             using (AppVeyor appVeyor = new AppVeyor(project, branch))
             {
                 Artifact artifact = appVeyor.GetLatestArtifacts(artifactFileName)[0];

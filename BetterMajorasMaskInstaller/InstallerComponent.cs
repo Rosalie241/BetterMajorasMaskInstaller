@@ -32,6 +32,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public bool Enabled { get; set; }
         /// <summary>
+        /// Whether this component is readonly
+        /// </summary>
+        public bool ReadOnly { get; set; }
+        /// <summary>
         /// What components need to be disabled when this one is selected
         /// </summary>
         public List<string> DisableOnSelected { get; set; }
@@ -39,6 +43,10 @@ namespace BetterMajorasMaskInstaller
         /// Whether this is an archive
         /// </summary>
         public bool Archive { get; set; }
+        /// <summary>
+        /// Whether we should extract everything
+        /// </summary>
+        public bool ExtractAll { get; set; }
         /// <summary>
         /// Url(s) (url, filename, filesize, md5 hash)
         /// </summary>

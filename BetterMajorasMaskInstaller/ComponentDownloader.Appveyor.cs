@@ -30,7 +30,17 @@ namespace BetterMajorasMaskInstaller
 
             using (AppVeyor appVeyor = new AppVeyor(project, branch))
             {
-                Artifact artifact = appVeyor.GetLatestArtifacts(artifactFileName)[0];
+                Artifact[] artifacts = appVeyor.GetLatestArtifacts();
+                Artifact artifact = null;
+
+                foreach(Artifact a in artifacts)
+                {
+                    if (a.FileName.Contains(artifactFileName))
+                        artifact = a;
+                }
+
+                if (artifact == null)
+                    throw new Exception($"Cannot find artifact containing \"{artifactFileName}\" in the filename");
 
                 UrlInfo info = new UrlInfo()
                 {

@@ -52,9 +52,9 @@ namespace AppVeyorApi
         /// <summary>
         /// Grabs the latest successful build artifacts
         /// </summary>
-        public Artifact[] GetLatestArtifacts(string artifactName = null)
+        public Artifact[] GetLatestArtifacts()
         {
-            string url = $"{apiUrl}/buildjobs/{getJobId(artifactName)}/artifacts";
+            string url = $"{apiUrl}/buildjobs/{getJobId()}/artifacts";
 
             Artifact[] ret = JsonConvert.DeserializeObject<Artifact[]>(getApiData(url));
 
@@ -67,7 +67,7 @@ namespace AppVeyorApi
             return ret;
         }
 
-        private string getJobId(string artifactName = null)
+        private string getJobId()
         {
             string url = $"{apiUrl}/projects/{project}/history?recordsNumber=5&branch={branch}";
 
@@ -80,22 +80,7 @@ namespace AppVeyorApi
                 {
                     string url2 = $"{apiUrl}/projects/{project}/build/{b.Version}";
 
-                    // find artifact with artifact name, 
-                    // else just return the first artifact
-                    if (artifactName != null)
-                    {
-                        foreach (Jobs j in JsonConvert.DeserializeObject<BuildInfo>(getApiData(url2)).Build.Jobs)
-                        {
-                            if (j.Name.Contains(artifactName))
-                                return j.JobId;
-                        }
-
-                        throw new Exception($"No artifact with name '{artifactName}' was found!");
-                    }
-                    else
-                    {
-                        return JsonConvert.DeserializeObject<BuildInfo>(getApiData(url2)).Build.Jobs[0].JobId;
-                    }
+                    return JsonConvert.DeserializeObject<BuildInfo>(getApiData(url2)).Build.Jobs[0].JobId;
                 }
             }
 

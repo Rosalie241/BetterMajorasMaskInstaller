@@ -82,7 +82,13 @@ namespace BetterMajorasMaskInstaller.Window
                     // store patches in a dictionary, 
                     // we're gonna execute them when everything is installed
                     foreach (KeyValuePair<string, KeyValuePair<string, string>> patch in component.Patches)
-                        patchList.Add(patch.Key, patch.Value);
+                    {
+                        // overwrite key value if already exists
+                        if (patchList.ContainsKey(patch.Key))
+                            patchList[patch.Key] = patch.Value;
+                        else
+                            patchList.Add(patch.Key, patch.Value);
+                    }
                 }
 
                 // if it's not an archive, 

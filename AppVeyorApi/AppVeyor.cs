@@ -72,10 +72,14 @@ namespace AppVeyorApi
             string url = $"{apiUrl}/projects/{project}/history?recordsNumber=5&branch={branch}";
 
             ProjectHistory history = JsonConvert.DeserializeObject<ProjectHistory>(getApiData(url));
-
+ 
             // find successful build
             foreach (Build b in history.Builds)
             {
+                // skip pull requests
+                if (b.PullRequestId != null)
+                    continue;
+
                 if (b.Status == "success")
                 {
                     string url2 = $"{apiUrl}/projects/{project}/build/{b.Version}";

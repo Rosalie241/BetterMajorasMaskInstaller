@@ -31,7 +31,6 @@ namespace BetterMajorasMaskInstaller.Window
             Task.Factory.StartNew(() => DownloadAllComponents());
         }
 
-
         private void OnDownloadProgressChanged(object source, DownloadStatusChangedEventArgs a)
         {
             double fileSize = 0;
@@ -60,10 +59,14 @@ namespace BetterMajorasMaskInstaller.Window
                     fileSize += urlInfo.FileSize;
 
                 // since we only accept int as argument,
-                // just convert bytes to MB and convert that to int
+                // just convert bytes to MB
                 // since we'll be going over the maximum int value
                 // if we don't do this
-                ChangeProgressBarValue((int)(bytesReceived / 1024 / 1024), (int)(fileSize / 1024 / 1024));
+                int megaBytesReceived = (int)(bytesReceived / 1024 / 1024);
+                int fileSizeInMegaBytes = (int)(fileSize / 1024 / 1024);
+
+                ChangeProgressBarValue(megaBytesReceived, fileSizeInMegaBytes);
+                ChangeProgressLabel($"{megaBytesReceived} MB / {fileSizeInMegaBytes} MB");
             }
             catch (Exception)
             {
@@ -88,6 +91,18 @@ namespace BetterMajorasMaskInstaller.Window
             progressBar1.Maximum = maxValue;
             progressBar1.Value = value;
         }
+
+        private void ChangeProgressLabel(string text)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { ChangeProgressLabel(text); });
+                return;
+            }
+
+            progressLabel.Text = text;
+        }
+
         private ComponentDownloader Downloader { get; set; }
         public InstallerComponents InstallerComponents { get; set; }
 

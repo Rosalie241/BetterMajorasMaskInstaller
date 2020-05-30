@@ -124,7 +124,7 @@ namespace BetterMajorasMaskInstaller.Window
                 // skip it
                 if (!component.Enabled)
                     continue;
-
+            retry:
                 ChangeProgressBarValue(0);
                 Log($"Downloading {component.Name}...");
 
@@ -142,6 +142,14 @@ namespace BetterMajorasMaskInstaller.Window
                         Log(Downloader.Exception.Message);
                         Log(Downloader.Exception.StackTrace);
                     }
+
+                    // ask the user if they want to retry
+                    DialogResult ret = MessageBox.Show("Download Failed, Try Again?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if (ret == DialogResult.Yes)
+                        // I know, I know, 'goto bad', but if you really hate this, 
+                        // PR me a rework of this mess which doesn't use goto
+                        goto retry;
+
                     return;
                 }
             }

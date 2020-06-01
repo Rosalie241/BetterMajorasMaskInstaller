@@ -72,6 +72,9 @@ namespace BetterMajorasMaskInstaller.Window
                     InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
                                                         new WebClient().DownloadString(
                                                             InstallerSettings.ConfigurationUrl));
+
+                    if (DumpConfigFileCheckBox.Checked)
+                        File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerComponents, Formatting.Indented));
                 }
 #if !DEBUG
             }
@@ -242,6 +245,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             ConfigurationUrlTextBox.Visible = visible;
             ConfigurationUrlLabel.Visible = visible;
+            DumpConfigFileCheckBox.Visible = visible;
         }
     }
 }

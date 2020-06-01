@@ -39,6 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.ConfigurationUrlLabel = new System.Windows.Forms.Label();
+            this.DumpConfigFileCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ContinueButton
@@ -143,12 +144,24 @@
             this.ConfigurationUrlLabel.Text = "Configuration File Url";
             this.ConfigurationUrlLabel.Visible = false;
             // 
+            // DumpConfigFileCheckBox
+            // 
+            this.DumpConfigFileCheckBox.AutoSize = true;
+            this.DumpConfigFileCheckBox.Location = new System.Drawing.Point(12, 126);
+            this.DumpConfigFileCheckBox.Name = "DumpConfigFileCheckBox";
+            this.DumpConfigFileCheckBox.Size = new System.Drawing.Size(106, 17);
+            this.DumpConfigFileCheckBox.TabIndex = 11;
+            this.DumpConfigFileCheckBox.Text = "Dump Config File";
+            this.DumpConfigFileCheckBox.UseVisualStyleBackColor = true;
+            this.DumpConfigFileCheckBox.Visible = false;
+            // 
             // Welcome
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(444, 361);
+            this.Controls.Add(this.DumpConfigFileCheckBox);
             this.Controls.Add(this.ConfigurationUrlLabel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -186,5 +199,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label ConfigurationUrlLabel;
+        private System.Windows.Forms.CheckBox DumpConfigFileCheckBox;
     }
 }

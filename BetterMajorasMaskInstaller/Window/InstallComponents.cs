@@ -75,6 +75,7 @@ namespace BetterMajorasMaskInstaller.Window
                 if (!component.Enabled)
                     continue;
 
+                ChangeProgressBarValue(0);
                 Log($"Installing {component.Name}...");
 
                 if (component.Patches != null)

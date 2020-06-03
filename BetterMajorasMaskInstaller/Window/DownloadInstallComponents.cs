@@ -16,7 +16,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -31,14 +33,62 @@ namespace BetterMajorasMaskInstaller.Window
             Task.Factory.StartNew(() => DownloadAllComponents());
         }
 
+        //
+        // Thanks to Jaxon on Discord for this code <3
+        //
+        Queue<long> downloadQueue = new Queue<long>();
+        private Stopwatch downloadStopWatch = new Stopwatch();
+        private long oldDownloadValue = -1;
+        private long previous = -1;
+        private string oldDownloadName;
+        private long GetAverageDownloadSpeed(long current, string downloadComponent)
+        {
+            if (!downloadStopWatch.IsRunning)
+                downloadStopWatch.Start();
+
+            if (downloadStopWatch.ElapsedMilliseconds < 1000)
+                return oldDownloadValue;
+
+            if (downloadQueue.Count >= 20)
+                downloadQueue.Dequeue();
+
+            // if we're at a different component,
+            // reset everything
+            if (downloadComponent != oldDownloadName)
+            {
+                downloadQueue.Clear();
+                oldDownloadName = downloadComponent;
+                previous = -1;
+                oldDownloadValue = -1;
+                return oldDownloadValue;
+            }
+
+            if (previous == -1)
+            {
+                previous = current;
+                return oldDownloadValue;
+            }
+
+            downloadQueue.Enqueue((long)((current - previous) / downloadStopWatch.Elapsed.TotalSeconds));
+            previous = current;
+
+            long average = downloadQueue.Sum(x => x) / downloadQueue.Count;
+
+            oldDownloadValue = average;
+            downloadStopWatch.Restart();
+
+            return average;
+        }
         private void OnDownloadProgressChanged(object source, DownloadStatusChangedEventArgs a)
         {
-            double fileSize = 0;
-            double bytesReceived = a.BytesReceived;
+            long fileSize = 0;
+            long bytesReceived = a.BytesReceived;
 
             // when there's no component, return
             if (Downloader.CurrentComponent == null)
                 return;
+
+            string currentComponentName = Downloader.CurrentComponent.Name;
 
             // get total filesize of *all* the files of the InstallComponent
             // then get the total download progress instead of the progress per file
@@ -66,7 +116,7 @@ namespace BetterMajorasMaskInstaller.Window
                 int fileSizeInMegaBytes = (int)(fileSize / 1024 / 1024);
 
                 ChangeProgressBarValue(megaBytesReceived, fileSizeInMegaBytes);
-                ChangeProgressLabel($"{megaBytesReceived} MB / {fileSizeInMegaBytes} MB");
+                ChangeProgressLabel($"{megaBytesReceived} MiB / {fileSizeInMegaBytes} MiB @ {GetAverageDownloadSpeed((bytesReceived / 1024), currentComponentName)} KiB/s");
             }
             catch (Exception)
             {

@@ -13,6 +13,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace BetterMajorasMaskInstaller
@@ -43,6 +44,10 @@ namespace BetterMajorasMaskInstaller
         /// Whether this is an archive
         /// </summary>
         public bool Archive { get; set; }
+        /// <summary>
+        /// Installed File Size
+        /// </summary>
+        public Int64 InstalledSize { get; set;  }
         /// <summary>
         /// Whether we should extract everything
         /// </summary>

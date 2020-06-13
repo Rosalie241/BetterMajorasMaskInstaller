@@ -113,9 +113,9 @@ namespace BetterMajorasMaskInstaller.Window
         private void InstallButton_Click(object sender, EventArgs e)
         {
             // download disk space required in bytes
-            // we start with 1gb to make sure it has at least 1 gb available
-            long downloadDiskSpaceRequired = 1024;
-            long installDiskSpaceRequired = 0;
+            // we start with 512 to make sure it has at least 512 mb available
+            Int64 downloadDiskSpaceRequired = 512;
+            Int64 installDiskSpaceRequired = 512;
 
             // calculate disk space required in mb
             foreach (InstallerComponent component in InstallerComponents.Components)
@@ -124,29 +124,41 @@ namespace BetterMajorasMaskInstaller.Window
                 if (!component.Enabled)
                     continue;
 
-                foreach (int size in component.Urls.Select(x => x.FileSize))
+                installDiskSpaceRequired += (component.InstalledSize / 1024 / 1024);
+
+                foreach (Int64 size in component.Urls.Select(x => x.FileSize))
                 {
-                    downloadDiskSpaceRequired += size / 1024 / 1024;
-                    // make sure we're 'safe' with the install size
-                    installDiskSpaceRequired += (size / 1024 / 1024) * 2;
+                    downloadDiskSpaceRequired += (size / 1024 / 1024);
                 }
             }
 
             DriveInfo downloadDriveInfo = new DriveInfo(InstallerSettings.DownloadDirectory);
             DriveInfo installDriveInfo = new DriveInfo(InstallerSettings.InstallDirectory);
 
-            // verify download directory drive in mb
-            if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
+            // if it's the same drive, download + install size
+            if (downloadDriveInfo.Name == installDriveInfo.Name)
             {
-                MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= (downloadDiskSpaceRequired + installDiskSpaceRequired))
+                {
+                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
-
-            // verify install directory drive in mb
-            if ((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
+            else
             {
-                MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                // verify download directory drive in mb
+                if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
+                {
+                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // verify install directory drive in mb
+                if ((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
+                {
+                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
 
             this.Hide();

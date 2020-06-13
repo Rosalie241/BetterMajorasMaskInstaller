@@ -13,6 +13,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace BetterMajorasMaskInstaller
 {
     public class UrlInfo
@@ -20,6 +22,6 @@ namespace BetterMajorasMaskInstaller
         public string Url { get; set; }
         public string FileName { get; set; }
         public string FileHash { get; set; }
-        public long FileSize { get; set; }
+        public Int64 FileSize { get; set; }
     }
 }

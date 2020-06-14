@@ -69,7 +69,7 @@ namespace AppVeyorApi
 
         private string getJobId()
         {
-            string url = $"{apiUrl}/projects/{project}/history?recordsNumber=5&branch={branch}";
+            string url = $"{apiUrl}/projects/{project}/history?pr=false&recordsNumber=5&branch={branch}";
 
             ProjectHistory history = JsonConvert.DeserializeObject<ProjectHistory>(getApiData(url));
  

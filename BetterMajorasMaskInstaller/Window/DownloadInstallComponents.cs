@@ -72,7 +72,7 @@ namespace BetterMajorasMaskInstaller.Window
             downloadQueue.Enqueue((long)((current - previous) / downloadStopWatch.Elapsed.TotalSeconds));
             previous = current;
 
-            long average = downloadQueue.Sum(x => x) / downloadQueue.Count;
+            long average = downloadQueue.Sum() / downloadQueue.Count;
 
             oldDownloadValue = average;
             downloadStopWatch.Restart();

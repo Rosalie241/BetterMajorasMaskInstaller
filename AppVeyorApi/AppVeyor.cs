@@ -69,7 +69,11 @@ namespace AppVeyorApi
 
         private string getJobId()
         {
-            string url = $"{apiUrl}/projects/{project}/history?pr=false&recordsNumber=5&branch={branch}";
+            // TODO:
+            // this is still hacky, for some reason 'pr=false' doesn't do anything??
+            // so for now just hope that one of the last 100 builds will be not a PR :)
+            // ref https://github.com/appveyor/ci/issues/3155
+            string url = $"{apiUrl}/projects/{project}/history?recordsNumber=100&branch={branch}&pr=false";
 
             ProjectHistory history = JsonConvert.DeserializeObject<ProjectHistory>(getApiData(url));
  

@@ -38,47 +38,53 @@ namespace BetterMajorasMaskInstaller.Window
         //
         Queue<long> downloadQueue = new Queue<long>();
         private Stopwatch downloadStopWatch = new Stopwatch();
-        private long oldDownloadValue = -1;
-        private long previous = -1;
-        private string oldDownloadName;
-        private long GetAverageDownloadSpeed(long current, string downloadComponent)
+        private long oldAverage = -1;
+        private long previousTotal = -1;
+        private string oldComponent;
+        private long GetAverageDownloadSpeed(long currentTotal, string currentComponent)
         {
+            // if we're at a different component,
+            // reset everything
+            if (currentComponent != oldComponent)
+            {
+                downloadQueue.Clear();
+                oldComponent = currentComponent;
+                downloadStopWatch.Restart();
+                previousTotal = -1;
+                oldAverage = -1;
+
+                return oldAverage;
+            }
+
             if (!downloadStopWatch.IsRunning)
                 downloadStopWatch.Start();
 
             if (downloadStopWatch.ElapsedMilliseconds < 1000)
-                return oldDownloadValue;
+                return oldAverage;
 
             if (downloadQueue.Count >= 20)
                 downloadQueue.Dequeue();
 
-            // if we're at a different component,
-            // reset everything
-            if (downloadComponent != oldDownloadName)
+            if (previousTotal == -1)
             {
-                downloadQueue.Clear();
-                oldDownloadName = downloadComponent;
-                previous = -1;
-                oldDownloadValue = -1;
-                return oldDownloadValue;
+                previousTotal = currentTotal;
+
+                return oldAverage;
             }
 
-            if (previous == -1)
-            {
-                previous = current;
-                return oldDownloadValue;
-            }
+            // Enqueue average download speed since last average was enqueued
+            downloadQueue.Enqueue((long)((currentTotal - previousTotal) / downloadStopWatch.Elapsed.TotalSeconds));
+            previousTotal = currentTotal;
 
-            downloadQueue.Enqueue((long)((current - previous) / downloadStopWatch.Elapsed.TotalSeconds));
-            previous = current;
-
+            // Total average for component is the average of average download speeds
             long average = downloadQueue.Sum() / downloadQueue.Count;
 
-            oldDownloadValue = average;
+            oldAverage = average;
             downloadStopWatch.Restart();
 
             return average;
         }
+
         private void OnDownloadProgressChanged(object source, DownloadStatusChangedEventArgs a)
         {
             long fileSize = 0;

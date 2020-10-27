@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("BetterMajorasMaskInstaller")]
-[assembly: AssemblyCopyright("Copyright © Tim Wanders 2019")]
+[assembly: AssemblyCopyright("Copyright © Rosalie Wanders 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

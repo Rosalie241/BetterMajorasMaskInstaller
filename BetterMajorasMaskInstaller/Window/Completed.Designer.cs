@@ -31,6 +31,7 @@
             this.QuitButton = new System.Windows.Forms.Button();
             this.DesktopShortcutCheckBox = new System.Windows.Forms.CheckBox();
             this.TemporaryFilesCheckBox = new System.Windows.Forms.CheckBox();
+            this.StartMenuShortcutCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // QuitButton
@@ -60,18 +61,31 @@
             this.TemporaryFilesCheckBox.AutoSize = true;
             this.TemporaryFilesCheckBox.Checked = true;
             this.TemporaryFilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.TemporaryFilesCheckBox.Location = new System.Drawing.Point(12, 36);
+            this.TemporaryFilesCheckBox.Location = new System.Drawing.Point(12, 59);
             this.TemporaryFilesCheckBox.Name = "TemporaryFilesCheckBox";
             this.TemporaryFilesCheckBox.Size = new System.Drawing.Size(215, 17);
             this.TemporaryFilesCheckBox.TabIndex = 2;
             this.TemporaryFilesCheckBox.Text = "Remove Temporary Download Directory";
             this.TemporaryFilesCheckBox.UseVisualStyleBackColor = true;
             // 
+            // StartMenuShortcutCheckBox
+            // 
+            this.StartMenuShortcutCheckBox.AutoSize = true;
+            this.StartMenuShortcutCheckBox.Checked = true;
+            this.StartMenuShortcutCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.StartMenuShortcutCheckBox.Location = new System.Drawing.Point(12, 36);
+            this.StartMenuShortcutCheckBox.Name = "StartMenuShortcutCheckBox";
+            this.StartMenuShortcutCheckBox.Size = new System.Drawing.Size(150, 17);
+            this.StartMenuShortcutCheckBox.TabIndex = 3;
+            this.StartMenuShortcutCheckBox.Text = "Create start menu shortcut";
+            this.StartMenuShortcutCheckBox.UseVisualStyleBackColor = true;
+            // 
             // Completed
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(444, 361);
+            this.Controls.Add(this.StartMenuShortcutCheckBox);
             this.Controls.Add(this.TemporaryFilesCheckBox);
             this.Controls.Add(this.DesktopShortcutCheckBox);
             this.Controls.Add(this.QuitButton);
@@ -92,5 +106,6 @@
         private System.Windows.Forms.Button QuitButton;
         private System.Windows.Forms.CheckBox DesktopShortcutCheckBox;
         private System.Windows.Forms.CheckBox TemporaryFilesCheckBox;
+        private System.Windows.Forms.CheckBox StartMenuShortcutCheckBox;
     }
 }

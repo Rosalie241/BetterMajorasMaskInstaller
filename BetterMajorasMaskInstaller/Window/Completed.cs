@@ -36,34 +36,51 @@ namespace BetterMajorasMaskInstaller.Window
         public void Welcome_Closing(object sender, CancelEventArgs e) => QuitButton_Click(this, null);
         public InstallerComponents InstallerComponents { get; set; }
 
+        private void CreateShortcut(string path)
+        {
+            string desktopFilePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "Project64.lnk");
+
+            IWshShortcut shortcut = (IWshShortcut)new WshShell().CreateShortcut(path);
+
+            shortcut.Description = "Project64 installed by BetterMajorasMaskInstaller";
+            shortcut.TargetPath = Path.Combine(
+                InstallerSettings.InstallDirectory,
+                "PJ64Launcher.exe");
+
+            shortcut.IconLocation = Path.Combine(
+                InstallerSettings.InstallDirectory,
+                "Project64.exe");
+
+            shortcut.WorkingDirectory = InstallerSettings.InstallDirectory;
+
+            shortcut.Save();
+        }
+
         private void QuitButton_Click(object sender, EventArgs e)
         {
             this.Hide();
 
             // create desktop shortcut
-            if(DesktopShortcutCheckBox.Checked)
+            if (DesktopShortcutCheckBox.Checked)
             {
-                string desktopFilePath = Path.Combine(
+                CreateShortcut(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "Project64.lnk");
-
-                IWshShortcut shortcut = (IWshShortcut)new WshShell().CreateShortcut(desktopFilePath);
-
-                shortcut.Description = "Project64 installed by MM Installer";
-                shortcut.TargetPath = Path.Combine(
-                    InstallerSettings.InstallDirectory,
-                    "PJ64Launcher.exe");
-
-                shortcut.IconLocation = Path.Combine(
-                    InstallerSettings.InstallDirectory,
-                    "Project64.exe");
-
-                shortcut.WorkingDirectory = InstallerSettings.InstallDirectory;
-
-                shortcut.Save();  
+                    "Project64.lnk")
+                );
             }
 
-            if(TemporaryFilesCheckBox.Checked)
+            // create start menu shortcut
+            if (StartMenuShortcutCheckBox.Checked)
+            {
+                CreateShortcut(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+                    "Project64.lnk")
+                );
+            }
+
+            if (TemporaryFilesCheckBox.Checked)
             {
                 // delete each file from each component,
                 // then delete the directory if it's empty

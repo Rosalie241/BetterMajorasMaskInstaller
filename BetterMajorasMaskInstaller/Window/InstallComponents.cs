@@ -32,6 +32,7 @@ namespace BetterMajorasMaskInstaller.Window
         }
 
         public InstallerComponents InstallerComponents { get; set; }
+        public bool FromUpdater { get; set; }
 
         private void InstallComponents_Load(object sender, EventArgs args)
         {
@@ -98,8 +99,24 @@ namespace BetterMajorasMaskInstaller.Window
                 {
                     foreach (KeyValuePair<string, string> cFiles in component.Files)
                     {
+                        bool optional = cFiles.Key.StartsWith("#");
+                        string fileName = cFiles.Key;
+
+                        if (optional)
+                            fileName = fileName.TrimStart('#');
+
                         string sourceFile = Path.Combine(InstallerSettings.DownloadDirectory,
-                            cFiles.Key);
+                                fileName);
+
+                        // if it doesn't exist in the download dir,
+                        // but if it exists in the current dir, use the current dir
+                        if (!File.Exists(sourceFile) && File.Exists(fileName))
+                            sourceFile = fileName;
+
+                        // skip optional items when needed
+                        if (optional && !File.Exists(sourceFile) && !File.Exists(fileName))
+                            continue;
+
                         string targetFile = Path.Combine(InstallerSettings.InstallDirectory,
                             cFiles.Value);
 
@@ -195,7 +212,7 @@ namespace BetterMajorasMaskInstaller.Window
                 Log(e.StackTrace);
                 return;
             }
-
+            
             Log("Completed");
 
             // launch post-install screen
@@ -212,11 +229,33 @@ namespace BetterMajorasMaskInstaller.Window
 
             this.Hide();
 
+            // this is a static object (because DeleteTempDirectory needs to access it too)
+            Completed.InstallerComponents = this.InstallerComponents;
+
+            if (FromUpdater)
+            {
+                try
+                {
+                    Completed.DeleteTempDirectory();
+                }
+                catch(Exception)
+                {
+                    // ignore
+                }
+
+                Updater.SaveUpdateData();
+
+                MessageBox.Show("Update completed", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                Application.Exit();
+
+                return;
+            }
+
             new Completed()
             {
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location,
-                InstallerComponents = this.InstallerComponents
             }.Show();
         }
     }

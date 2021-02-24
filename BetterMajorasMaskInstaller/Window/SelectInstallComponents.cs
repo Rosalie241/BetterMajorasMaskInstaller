@@ -163,6 +163,9 @@ namespace BetterMajorasMaskInstaller.Window
 
             this.Hide();
 
+            Updater.InstallerComponents = InstallerComponents;
+            Updater.SaveUpdateData();
+
             new DownloadInstallComponents()
             {
                 InstallerComponents = InstallerComponents,

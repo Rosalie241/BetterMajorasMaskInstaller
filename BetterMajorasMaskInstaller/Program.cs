@@ -14,7 +14,10 @@
 */
 
 using System;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
+using BetterMajorasMaskInstaller;
 
 namespace BetterMajorasMaskInstaller
 {
@@ -24,11 +27,28 @@ namespace BetterMajorasMaskInstaller
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Window.Welcome());
+
+            if (args.Length > 0 && args[0] == "/updater")
+            {
+                // check for update
+                if (!Updater.IsUpdateAvailable())
+                    return;
+
+                // ask user if they want the update
+                if (!Updater.AskUserForUpdate())
+                    return;
+
+                // install update
+                Updater.InstallUpdate();
+            }
+            else
+            {
+                Application.Run(new Window.Welcome());
+            }
         }
     }
 }

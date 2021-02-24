@@ -34,7 +34,7 @@ namespace BetterMajorasMaskInstaller.Window
             InitializeComponent();
         }
         public void Welcome_Closing(object sender, CancelEventArgs e) => QuitButton_Click(this, null);
-        public InstallerComponents InstallerComponents { get; set; }
+        public static InstallerComponents InstallerComponents { get; set; }
 
         private void CreateShortcut(string path)
         {
@@ -56,6 +56,45 @@ namespace BetterMajorasMaskInstaller.Window
             shortcut.WorkingDirectory = InstallerSettings.InstallDirectory;
 
             shortcut.Save();
+        }
+
+        public static void DeleteTempDirectory()
+        {
+            // delete each file from each component,
+            // then delete the directory if it's empty
+            foreach (InstallerComponent component in InstallerComponents.Components)
+            {
+                if (!component.Enabled)
+                    continue;
+
+                foreach (UrlInfo file in component.Urls)
+                {
+                    string targetFile = Path.Combine(InstallerSettings.DownloadDirectory,
+                                file.FileName);
+
+                    if (File.Exists(targetFile))
+                        File.Delete(targetFile);
+                }
+            }
+
+            // also delete extracted 7za.exe and project64.zip
+            foreach (string file in new string[] { "7za.exe", "Project64.zip" })
+            {
+                string targetFile = Path.Combine(InstallerSettings.DownloadDirectory, file);
+
+                if (File.Exists(targetFile))
+                    File.Delete(targetFile);
+            }
+
+            // hmm, the dir can be gone? 
+            if (Directory.Exists(InstallerSettings.DownloadDirectory))
+            {
+                // make sure directory is empty
+                if (!Directory.EnumerateFileSystemEntries(InstallerSettings.DownloadDirectory).Any())
+                {
+                    Directory.Delete(InstallerSettings.DownloadDirectory, true);
+                }
+            }
         }
 
         private void QuitButton_Click(object sender, EventArgs e)
@@ -82,38 +121,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             if (TemporaryFilesCheckBox.Checked)
             {
-                // delete each file from each component,
-                // then delete the directory if it's empty
-                foreach (InstallerComponent component in InstallerComponents.Components)
-                {
-                    foreach (UrlInfo file in component.Urls)
-                    {
-                        string targetFile = Path.Combine(InstallerSettings.DownloadDirectory,
-                                    file.FileName);
-
-                        if (File.Exists(targetFile))
-                            File.Delete(targetFile);
-                    }
-                }
-
-                // also delete extracted 7za.exe and project64.zip
-                foreach (string file in new string[] { "7za.exe", "Project64.zip" })
-                {
-                    string targetFile = Path.Combine(InstallerSettings.DownloadDirectory, file);
-
-                    if (File.Exists(targetFile))
-                        File.Delete(targetFile);
-                }
-
-                // hmm, the dir can be gone? 
-                if (Directory.Exists(InstallerSettings.DownloadDirectory))
-                {
-                    // make sure directory is empty
-                    if (!Directory.EnumerateFileSystemEntries(InstallerSettings.DownloadDirectory).Any())
-                    {
-                        Directory.Delete(InstallerSettings.DownloadDirectory, true);
-                    }
-                }
+                DeleteTempDirectory();
             }
 
             Application.Exit();

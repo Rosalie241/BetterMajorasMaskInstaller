@@ -161,7 +161,7 @@ namespace BetterMajorasMaskInstaller.Window
 
         private ComponentDownloader Downloader { get; set; }
         public InstallerComponents InstallerComponents { get; set; }
-
+        public bool FromUpdater { get; set; }
         private void DownloadAllComponents()
         {
             if (!Directory.Exists(InstallerSettings.DownloadDirectory))
@@ -227,7 +227,8 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 InstallerComponents = InstallerComponents,
                 StartPosition = FormStartPosition.Manual,
-                Location = this.Location
+                Location = this.Location,
+                FromUpdater = FromUpdater
             }.Show();
         }
         private void Log(string text)

@@ -67,15 +67,18 @@ namespace BetterMajorasMaskInstaller.Window
             try
             {
 #endif
-                if (InstallerComponents == null || InstallerSettings.DeveloperMode)
-                {
-                    InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
-                                                        new WebClient().DownloadString(
-                                                            InstallerSettings.ConfigurationUrl));
+            if (InstallerComponents == null || InstallerSettings.DeveloperMode)
+            {
+                // windows 7 fix
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
-                    if (DumpConfigFileCheckBox.Checked)
-                        File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerComponents, Formatting.Indented));
-                }
+                InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
+                                                    new WebClient().DownloadString(
+                                                        InstallerSettings.ConfigurationUrl));
+
+                if (DumpConfigFileCheckBox.Checked)
+                    File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerComponents, Formatting.Indented));
+            }
 #if !DEBUG
             }
             catch (Exception)

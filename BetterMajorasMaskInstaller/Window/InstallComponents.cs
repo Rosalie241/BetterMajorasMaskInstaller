@@ -122,8 +122,11 @@ namespace BetterMajorasMaskInstaller.Window
                 // if it's an archive, extract each file
                 // in the right location
 
-                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory,
-                    component.Urls.First().FileName);
+                string filename = component.Urls.First().FileName == null ?
+                                    component.FallbackUrls.First().FileName :
+                                    component.Urls.First().FileName;
+
+                string archiveFile = Path.Combine(InstallerSettings.DownloadDirectory, filename);
 
                 using (ArchiveFile archive = new ArchiveFile(archiveFile, sevenZipExecutable))
                 {

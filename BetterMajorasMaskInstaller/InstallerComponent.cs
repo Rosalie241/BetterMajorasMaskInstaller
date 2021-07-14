@@ -57,6 +57,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public List<UrlInfo> Urls { get; set; }
         /// <summary>
+        /// Fallback Url(s) (url, filename, filesize, md5 hash)
+        /// </summary>
+        public List<UrlInfo> FallbackUrls { get; set; }
+        /// <summary>
         /// Files (source, target)
         /// </summary>
         public Dictionary<string, string> Files { get; set; }

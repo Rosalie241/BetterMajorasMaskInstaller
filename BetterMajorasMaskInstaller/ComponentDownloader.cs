@@ -91,16 +91,17 @@ namespace BetterMajorasMaskInstaller
         /// <summary>
         /// Downloads DownloadComponent in directory
         /// </summary>
-        public void DownloadComponent(ref InstallerComponent component, string directory)
+        public void DownloadComponent(ref InstallerComponent component, string directory, bool fallback)
         {
+            Failed = false;
             ComponentDownloadIndex = -1;
             CurrentComponent = component;
 
             // loop over each URL and download it
-            for (int i = 0; i < component.Urls.Count; i++)
+            for (int i = 0; i < (fallback ? component.FallbackUrls.Count : component.Urls.Count); i++)
             {
-                UrlInfo urlInfo = component.Urls[i];
-
+                UrlInfo urlInfo = fallback ? component.FallbackUrls[i] : component.Urls[i];
+                
                 ComponentDownloadIndex++;
 
                 // if it's an AppVeyor Url,
@@ -120,7 +121,14 @@ namespace BetterMajorasMaskInstaller
                     }
 
                     // also update the actual InstallerComponent
-                    component.Urls[0] = urlInfo;
+                    if (fallback)
+                    {
+                        component.FallbackUrls[0] = urlInfo;
+                    }
+                    else
+                    {
+                        component.Urls[0] = urlInfo;
+                    }
                     CurrentComponent = component;
                 }
 
@@ -128,13 +136,17 @@ namespace BetterMajorasMaskInstaller
 
                 string file = null;
                 if (urlInfo.FileName != null)
+                {
                     file = Path.Combine(directory, urlInfo.FileName);
+                }
 
                 string hash = urlInfo.FileHash;
 
                 // if the hash matches, skip it
                 if (VerifyHash(file, hash, urlInfo.FileSize))
+                {
                     continue;
+                }
 
                 // try to download the file using WebClient
                 // also verify the hash when it's done.
@@ -154,7 +166,9 @@ namespace BetterMajorasMaskInstaller
                     // we use Thread.Sleep here because
                     // Thread.Yield has high cpu usage
                     while (Client.IsBusy)
-                        Thread.Sleep(10);
+                    {
+                        Thread.Sleep(200);
+                    }
 
                     Failed = !VerifyHash(file, hash, urlInfo.FileSize);
                 }
@@ -166,7 +180,9 @@ namespace BetterMajorasMaskInstaller
 
                 // abort when failed
                 if (Failed)
+                {
                     return;
+                }
             }
         }
         public void Dispose()

@@ -86,13 +86,19 @@ namespace BetterMajorasMaskInstaller.Window
                 // then delete the directory if it's empty
                 foreach (InstallerComponent component in InstallerComponents.Components)
                 {
-                    foreach (UrlInfo file in component.Urls)
+                    var urls = component.Urls.First().FileName == null ?
+                                component.FallbackUrls :
+                                component.Urls;
+
+                    foreach (UrlInfo file in urls)
                     {
                         string targetFile = Path.Combine(InstallerSettings.DownloadDirectory,
                                     file.FileName);
 
                         if (File.Exists(targetFile))
+                        {
                             File.Delete(targetFile);
+                        }
                     }
                 }
 

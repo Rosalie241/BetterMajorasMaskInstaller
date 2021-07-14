@@ -38,10 +38,6 @@ namespace BetterMajorasMaskInstaller.Window
 
         private void CreateShortcut(string path)
         {
-            string desktopFilePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                "Project64.lnk");
-
             IWshShortcut shortcut = (IWshShortcut)new WshShell().CreateShortcut(path);
 
             shortcut.Description = "Project64 installed by BetterMajorasMaskInstaller";
@@ -67,7 +63,7 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 CreateShortcut(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "Project64.lnk")
+                    "Project64 HD.lnk")
                 );
             }
 
@@ -76,7 +72,7 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 CreateShortcut(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
-                    "Project64.lnk")
+                    "Project64 HD.lnk")
                 );
             }
 

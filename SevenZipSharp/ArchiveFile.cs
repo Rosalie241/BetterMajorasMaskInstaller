@@ -28,38 +28,44 @@ namespace SevenZipSharp
     {
         private string ArchiveFileName { get; set; }
         /// <summary>
-        /// 7za executable location, defaults to '7za'
+        ///     7za executable location, defaults to '7za'
         /// </summary>
         public string SevenZipExecutable { get; set; }
         /// <summary>
-        /// Event which fires when the extraction progress changes
+        ///     Event which fires when the extraction progress changes
         /// </summary>
         public ProgressChangedEventHandler OnProgressChange { get; set; }
+
         public ArchiveFile(string fileName, string sevenZipExecutable = "7za.exe")
         {
             this.ArchiveFileName = fileName;
             this.SevenZipExecutable = sevenZipExecutable;
 
             if (!File.Exists(SevenZipExecutable))
+            {
                 throw new Exception("Can't find 7za!");
+            }
 
             if (!File.Exists(ArchiveFileName))
+            {
                 throw new InvalidDataException("Archive doesn't exist!");
+            }
         }
         /// <summary>
-        /// 7za stdout
+        ///     7za stdout
         /// </summary>
         public List<string> StandardOutput = new List<string>();
         /// <summary>
-        /// 7za stderr
+        ///     7za stderr
         /// </summary>
         public List<string> ErrorOutput = new List<string>();
         /// <summary>
-        /// Exception if something bad happens
+        ///     Exception if something bad happens
         /// </summary>
         public Exception Exception { get; set; }
+
         /// <summary>
-        /// Process OutputDataReceived event handler
+        ///     Process OutputDataReceived event handler
         /// </summary>
         private void OnOutputDataReceived(object sender, DataReceivedEventArgs args)
         {
@@ -116,7 +122,9 @@ namespace SevenZipSharp
             // since we use a hacky method
             // we can't decide the output file name
             if (Path.GetFileName(fileName) != Path.GetFileName(outputFile))
+            {
                 throw new NotImplementedException();
+            }
 
             string outputPath = Path.GetDirectoryName(outputFile);
 

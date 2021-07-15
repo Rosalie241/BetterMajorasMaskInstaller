@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentDownloader.Appveyor.cs" />
+    <Compile Include="ComponentHelper.cs" />
     <Compile Include="InstallerComponent.cs" />
     <Compile Include="InstallerComponents.cs" />
     <Compile Include="InstallerSettings.cs" />

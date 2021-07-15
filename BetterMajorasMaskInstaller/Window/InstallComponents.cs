@@ -112,6 +112,7 @@ namespace BetterMajorasMaskInstaller.Window
                             Log($"Installing {component.Name} Failed");
                             Log(e.Message);
                             Log(e.StackTrace);
+                            ComponentHelper.CleanupInstallationFiles();
                             return;
                         }
                     }
@@ -144,6 +145,7 @@ namespace BetterMajorasMaskInstaller.Window
                                 Log(archive.Exception.StackTrace);
                             }
 
+                            ComponentHelper.CleanupInstallationFiles();
                             return;
                         }
                     }
@@ -172,6 +174,7 @@ namespace BetterMajorasMaskInstaller.Window
                                 Log(archive.Exception.StackTrace);
                             }
 
+                            ComponentHelper.CleanupInstallationFiles();
                             return;
                         }
                     }
@@ -196,6 +199,7 @@ namespace BetterMajorasMaskInstaller.Window
                 Log("Patching Failed");
                 Log(e.Message);
                 Log(e.StackTrace);
+                ComponentHelper.CleanupInstallationFiles();
                 return;
             }
 

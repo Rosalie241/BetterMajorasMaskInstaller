@@ -21,51 +21,51 @@ namespace BetterMajorasMaskInstaller
     public class InstallerComponent
     {
         /// <summary>
-        /// Name
+        ///     Name
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Description
+        ///     Description
         /// </summary>
         public string Description { get; set; }
         /// <summary>
-        /// Whether this component is enabled
+        ///     Whether this component is enabled
         /// </summary>
         public bool Enabled { get; set; }
         /// <summary>
-        /// Whether this component is readonly
+        ///     Whether this component is readonly
         /// </summary>
         public bool ReadOnly { get; set; }
         /// <summary>
-        /// What components need to be disabled when this one is selected
+        ///     What components need to be disabled when this one is selected
         /// </summary>
         public List<string> DisableOnSelected { get; set; }
         /// <summary>
-        /// Whether this is an archive
+        ///     Whether this is an archive
         /// </summary>
         public bool Archive { get; set; }
         /// <summary>
-        /// Installed File Size
+        ///     Installed File Size
         /// </summary>
         public Int64 InstalledSize { get; set;  }
         /// <summary>
-        /// Whether we should extract everything
+        ///     Whether we should extract everything
         /// </summary>
         public bool ExtractAll { get; set; }
         /// <summary>
-        /// Url(s) (url, filename, filesize, md5 hash)
+        ///     Url(s) (url, filename, filesize, md5 hash)
         /// </summary>
         public List<UrlInfo> Urls { get; set; }
         /// <summary>
-        /// Fallback Url(s) (url, filename, filesize, md5 hash)
+        ///     Fallback Url(s) (url, filename, filesize, md5 hash)
         /// </summary>
         public List<UrlInfo> FallbackUrls { get; set; }
         /// <summary>
-        /// Files (source, target)
+        ///     Files (source, target)
         /// </summary>
         public Dictionary<string, string> Files { get; set; }
         /// <summary>
-        /// Patches (file, source text, replacement text)
+        ///     Patches (file, source text, replacement text)
         /// </summary>
         public Dictionary<string, KeyValuePair<string, string>> Patches { get; set; }
     }

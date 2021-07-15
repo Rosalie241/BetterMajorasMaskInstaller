@@ -33,8 +33,9 @@ namespace BetterMajorasMaskInstaller.Window
             ConfigurationUrlTextBox.Text = InstallerSettings.ConfigurationUrl;
             DeveloperModeCheckBox.Checked = InstallerSettings.DeveloperMode;
         }
-        public InstallerComponents InstallerComponents { get; set; }
+
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
+
         private void ContinueButton_Click(object sender, EventArgs e)
         {
             InstallerSettings.InstallDirectory = Path.GetFullPath(InstallDirectoryTextBox.Text);
@@ -43,7 +44,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             // change download directory when install & download directory 
             // are the same
-            if (InstallerSettings.InstallDirectory == 
+            if (InstallerSettings.InstallDirectory ==
                 InstallerSettings.DownloadDirectory)
                 InstallerSettings.DownloadDirectory = Path.Combine(InstallerSettings.DownloadDirectory,
                     "temporary_download_cache");
@@ -60,24 +61,26 @@ namespace BetterMajorasMaskInstaller.Window
             // if they don't exist yet
             if (!AskCreateDirectory("Temporary Download", InstallerSettings.DownloadDirectory) ||
                 !AskCreateDirectory("Project64 Install", InstallerSettings.InstallDirectory))
+            {
                 return;
+            }
 
             // fetch configuration file
 #if !DEBUG
             try
             {
 #endif
-            if (InstallerComponents == null || InstallerSettings.DeveloperMode)
+            if (InstallerSettings.InstallerComponents == null || InstallerSettings.DeveloperMode)
             {
-                // windows 7 fix
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
-                InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
-                                                    new WebClient().DownloadString(
-                                                        InstallerSettings.ConfigurationUrl));
+                InstallerSettings.InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
+                                                            new WebClient().DownloadString(
+                                                                InstallerSettings.ConfigurationUrl
+                                                        ));
 
                 if (DumpConfigFileCheckBox.Checked)
-                    File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerComponents, Formatting.Indented));
+                {
+                    File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerSettings.InstallerComponents, Formatting.Indented));
+                }
             }
 #if !DEBUG
             }
@@ -89,29 +92,34 @@ namespace BetterMajorasMaskInstaller.Window
 #endif
             this.Hide();
 
-            new SelectInstallComponents(InstallerComponents)
+            new SelectInstallComponents()
             {
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location
             }.Show();
         }
+
         private void Welcome_Closing(object sender, CancelEventArgs args) => Application.Exit();
 
         /// <summary>
-        /// when the directory doesn't exist yet, ask the user if they want to create it
+        ///     When the directory doesn't exist yet, ask the user if they want to create it
         /// </summary>
         private bool AskCreateDirectory(string directoryName, string directory)
         {
             // return when the directory already exists
             if (Directory.Exists(directory))
+            {
                 return true;
+            }
 
             DialogResult result = MessageBox.Show($"{directoryName} directory doesn't exist, do you want it to be created?",
                    "Info",
                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
             if (result != DialogResult.Yes)
+            {
                 return false;
+            }
 
             try
             {
@@ -126,8 +134,9 @@ namespace BetterMajorasMaskInstaller.Window
 
             return true;
         }
+
         /// <summary>
-        /// Checks whether given directory is empty
+        ///     Checks whether given directory is empty
         /// </summary>
         private bool IsDirectoryEmpty(string directory)
         {
@@ -139,7 +148,9 @@ namespace BetterMajorasMaskInstaller.Window
                 int maxDirectoriesAllowed = 0;
                 if (InstallerSettings.DownloadDirectory ==
                     Path.Combine(directory, "temporary_download_cache"))
+                {
                     maxDirectoriesAllowed++;
+                }
 
                 DirectoryInfo dInfo = new DirectoryInfo(directory);
 
@@ -151,8 +162,9 @@ namespace BetterMajorasMaskInstaller.Window
                 return true;
             }
         }
+
         /// <summary>
-        /// Checks whether we can write to the given directory
+        ///     Checks whether we can write to the given directory
         /// </summary>
         private bool IsDirectoryAccessible(string directory)
         {
@@ -160,18 +172,19 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 File.Create(
                     Path.Combine(directory,
-                        Path.GetRandomFileName()), 
-                        1, 
+                        Path.GetRandomFileName()),
+                        1,
                         FileOptions.DeleteOnClose
                         ).Close();
 
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
         }
+
         private void ChangeInstallDirectoryButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog
@@ -182,14 +195,18 @@ namespace BetterMajorasMaskInstaller.Window
 
             // return when cancelled
             if (dialog.ShowDialog() != DialogResult.OK)
+            {
                 return;
+            }
 
             // make sure selected path isn't nothing
             if (String.IsNullOrEmpty(dialog.SelectedPath))
+            {
                 return;
+            }
 
             // make sure we have access to the directory
-            if(!IsDirectoryAccessible(dialog.SelectedPath))
+            if (!IsDirectoryAccessible(dialog.SelectedPath))
             {
                 MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -198,13 +215,13 @@ namespace BetterMajorasMaskInstaller.Window
             // make sure download & install directory aren't the same
             if (dialog.SelectedPath == InstallerSettings.DownloadDirectory)
             {
-                DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory 
+                DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory
                     = Path.Combine(InstallerSettings.DownloadDirectory,
                     "temporary_download_cache");
                 Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
             }
 
-            InstallDirectoryTextBox.Text = 
+            InstallDirectoryTextBox.Text =
                 InstallerSettings.InstallDirectory = dialog.SelectedPath;
         }
 
@@ -218,11 +235,15 @@ namespace BetterMajorasMaskInstaller.Window
 
             // return when cancelled
             if (dialog.ShowDialog() != DialogResult.OK)
+            {
                 return;
+            }
 
             // make sure selected path isn't nothing
             if (String.IsNullOrEmpty(dialog.SelectedPath))
+            {
                 return;
+            }
 
             // make sure download & install directory aren't the same
             if (dialog.SelectedPath == InstallerSettings.InstallDirectory)

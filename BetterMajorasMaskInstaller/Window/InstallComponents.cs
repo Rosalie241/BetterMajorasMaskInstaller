@@ -31,28 +31,37 @@ namespace BetterMajorasMaskInstaller.Window
             InitializeComponent();
         }
 
-        public InstallerComponents InstallerComponents { get; set; }
-
         private void InstallComponents_Load(object sender, EventArgs args)
         {
-            Task.Factory.StartNew(() => Install());
+            Task.Run(() => Install());
         }
+
         private void InstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
 
         private void ChangeProgressBarValue(int value)
         {
             if (this.InvokeRequired)
+            {
                 this.Invoke((MethodInvoker)delegate () { ChangeProgressBarValue(value); });
+            }
             else
+            {
                 InstallProgressBar.Value = value;
+            }
         }
+
         private void Log(string text)
         {
             if (this.InvokeRequired)
+            {
                 this.Invoke((MethodInvoker)delegate () { Log(text); });
+            }
             else
-                LogBox.Text += text + Environment.NewLine;
+            {
+                LogBox.AppendText(text + Environment.NewLine);
+            }
         }
+
         private void Install()
         {
             string sevenZipExecutable = Path.Combine(InstallerSettings.DownloadDirectory, "7za.exe");
@@ -68,12 +77,13 @@ namespace BetterMajorasMaskInstaller.Window
             Dictionary<string, KeyValuePair<string, string>> patchList
                 = new Dictionary<string, KeyValuePair<string, string>>();
 
-            foreach (InstallerComponent component in InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
             {
-                // if it's disabled,
-                // skip it
+                // skip when component is disabled
                 if (!component.Enabled)
+                {
                     continue;
+                }
 
                 ChangeProgressBarValue(0);
                 Log($"Installing {component.Name}...");
@@ -86,9 +96,13 @@ namespace BetterMajorasMaskInstaller.Window
                     {
                         // overwrite key value if already exists
                         if (patchList.ContainsKey(patch.Key))
+                        {
                             patchList[patch.Key] = patch.Value;
+                        }
                         else
+                        {
                             patchList.Add(patch.Key, patch.Value);
+                        }
                     }
                 }
 
@@ -163,19 +177,19 @@ namespace BetterMajorasMaskInstaller.Window
 
                             bool extractSuccess = archive.ExtractFile(extractFileInfo.Key, targetFile);
 
-                            if (extractSuccess)
-                                continue;
-
-                            Log($"Installing {component.Name} Failed");
-
-                            if (archive.Exception != null)
+                            if (!extractSuccess)
                             {
-                                Log(archive.Exception.Message);
-                                Log(archive.Exception.StackTrace);
-                            }
+                                Log($"Installing {component.Name} Failed");
 
-                            ComponentHelper.CleanupInstallationFiles();
-                            return;
+                                if (archive.Exception != null)
+                                {
+                                    Log(archive.Exception.Message);
+                                    Log(archive.Exception.StackTrace);
+                                }
+
+                                ComponentHelper.CleanupInstallationFiles();
+                                return;
+                            }
                         }
                     }
                 }
@@ -223,7 +237,6 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location,
-                InstallerComponents = this.InstallerComponents
             }.Show();
         }
     }

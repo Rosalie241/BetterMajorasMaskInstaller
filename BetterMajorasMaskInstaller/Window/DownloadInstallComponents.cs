@@ -30,7 +30,7 @@ namespace BetterMajorasMaskInstaller.Window
         {
             InitializeComponent();
 
-            Task.Factory.StartNew(() => DownloadAllComponents());
+            Task.Run(() => DownloadAllComponents());
         }
 
         //
@@ -40,8 +40,8 @@ namespace BetterMajorasMaskInstaller.Window
         private Stopwatch downloadStopWatch = new Stopwatch();
         private long oldAverage = -1;
         private long previousTotal = -1;
-        private string oldComponent;
-        private long GetAverageDownloadSpeed(long currentTotal, string currentComponent)
+        private InstallerComponent oldComponent;
+        private long GetAverageDownloadSpeed(long currentTotal, InstallerComponent currentComponent)
         {
             // if we're at a different component,
             // reset everything
@@ -57,13 +57,19 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             if (!downloadStopWatch.IsRunning)
+            {
                 downloadStopWatch.Start();
+            }
 
             if (downloadStopWatch.ElapsedMilliseconds < 1000)
+            {
                 return oldAverage;
+            }
 
             if (downloadQueue.Count >= 20)
+            {
                 downloadQueue.Dequeue();
+            }
 
             if (previousTotal == -1)
             {
@@ -90,12 +96,6 @@ namespace BetterMajorasMaskInstaller.Window
             long fileSize = 0;
             long bytesReceived = a.BytesReceived;
 
-            // when there's no component, return
-            if (Downloader.CurrentComponent == null)
-                return;
-
-            string currentComponentName = Downloader.CurrentComponent.Name;
-
             // get total filesize of *all* the files of the InstallComponent
             // then get the total download progress instead of the progress per file
             // and change the progressbar
@@ -107,12 +107,16 @@ namespace BetterMajorasMaskInstaller.Window
                 // it'll display it incorrectly,
                 // we don't care for now
                 // since users wont touch the files (I hope..)
-                for (int i = 0; i < Downloader.ComponentDownloadIndex; i++)
-                    bytesReceived += Downloader.CurrentComponent.Urls[i].FileSize;
+                for (int i = 0; i < a.CurrentComponentDownloadIndex; i++)
+                {
+                    bytesReceived += a.CurrentComponent.Urls[i].FileSize;
+                }
 
                 // add each filesize to fileSize
-                foreach (UrlInfo urlInfo in Downloader.CurrentComponent.Urls)
+                foreach (UrlInfo urlInfo in a.CurrentComponent.Urls)
+                {
                     fileSize += urlInfo.FileSize;
+                }
 
                 // since we only accept int as argument,
                 // just convert bytes to MB
@@ -122,7 +126,7 @@ namespace BetterMajorasMaskInstaller.Window
                 int fileSizeInMegaBytes = (int)(fileSize / 1024 / 1024);
 
                 ChangeProgressBarValue(megaBytesReceived, fileSizeInMegaBytes);
-                ChangeProgressLabel($"{megaBytesReceived} MiB / {fileSizeInMegaBytes} MiB @ {GetAverageDownloadSpeed((bytesReceived / 1024), currentComponentName)} KiB/s");
+                ChangeProgressLabel($"{megaBytesReceived} MiB / {fileSizeInMegaBytes} MiB @ {GetAverageDownloadSpeed((bytesReceived / 1024), a.CurrentComponent)} KiB/s");
             }
             catch (Exception)
             {
@@ -138,11 +142,11 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            // if this happens, something is wrong
-            // I don't care though :)
-            // not my problem
+            // sanity check
             if (value > maxValue)
+            {
                 return;
+            }
 
             progressBar1.Maximum = maxValue;
             progressBar1.Value = value;
@@ -153,55 +157,46 @@ namespace BetterMajorasMaskInstaller.Window
             if (this.InvokeRequired)
             {
                 this.Invoke((MethodInvoker)delegate () { ChangeProgressLabel(text); });
-                return;
             }
-
-            progressLabel.Text = text;
+            else
+            {
+                progressLabel.Text = text;
+            }
         }
 
-        private ComponentDownloader Downloader { get; set; }
-        public InstallerComponents InstallerComponents { get; set; }
-
-        private void DownloadAllComponents()
+        private async Task DownloadAllComponents()
         {
-            if (!Directory.Exists(InstallerSettings.DownloadDirectory))
-                Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
+            var downloader = new ComponentDownloader();
+            downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
 
-            Downloader = new ComponentDownloader();
-            Downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
-
-            List<InstallerComponent> components = InstallerComponents.Components;
+            var components = InstallerSettings.InstallerComponents.Components;
 
             for (int i = 0; i < components.Count; i++)
             {
                 InstallerComponent component = components[i];
 
-                // if it's disabled,
-                // skip it
+                // make sure component is enabled
                 if (!component.Enabled)
+                {
                     continue;
+                }
 
                 bool useFallback = false;
             retry:
-                ChangeProgressBarValue(0);
-                Log($"Downloading {component.Name}...");
+                try
+                {
+                    ChangeProgressBarValue(0);
+                    Log($"Downloading {component.Name}...");
 
-                Downloader.DownloadComponent(ref component, InstallerSettings.DownloadDirectory, useFallback);
-
-                InstallerComponents.Components[i] = component;
-
-                if (Downloader.Failed)
+                    await downloader.DownloadComponent(i, InstallerSettings.DownloadDirectory, useFallback);
+                }
+                catch (Exception e)
                 {
                     Log($"Downloading {component.Name} Failed");
+                    Log(e.Message);
+                    Log(e.StackTrace);
 
-                    // log Exception aswell, if it exists
-                    if (Downloader.Exception != null)
-                    {
-                        Log(Downloader.Exception.Message);
-                        Log(Downloader.Exception.StackTrace);
-                    }
-
-                    if (component.FallbackUrls != null && 
+                    if (component.FallbackUrls != null &&
                         !useFallback)
                     {
                         Log("Retrying With Fallback...");
@@ -217,14 +212,15 @@ namespace BetterMajorasMaskInstaller.Window
                         goto retry;
                     }
 
+                    // early exit
                     return;
                 }
             }
 
             Log("Downloading completed");
-
             LaunchInstallComponents();
         }
+
         private void LaunchInstallComponents()
         {
             if (this.InvokeRequired)
@@ -234,20 +230,26 @@ namespace BetterMajorasMaskInstaller.Window
             }
 
             this.Hide();
+
             new InstallComponents()
             {
-                InstallerComponents = InstallerComponents,
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location
             }.Show();
         }
+
         private void Log(string text)
         {
             if (this.InvokeRequired)
+            {
                 this.Invoke((MethodInvoker)delegate () { Log(text); });
+            }
             else
-                LogBox.Text += text + Environment.NewLine;
+            {
+                LogBox.AppendText(text + Environment.NewLine);
+            }
         }
+
         private void DownloadInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }
 }

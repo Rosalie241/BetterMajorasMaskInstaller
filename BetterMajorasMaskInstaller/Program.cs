@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Net;
 using System.Windows.Forms;
 
 namespace BetterMajorasMaskInstaller
@@ -26,6 +27,9 @@ namespace BetterMajorasMaskInstaller
         [STAThread]
         static void Main()
         {
+            // fix for windows 7
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Window.Welcome());

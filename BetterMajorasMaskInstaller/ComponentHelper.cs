@@ -19,6 +19,9 @@ namespace BetterMajorasMaskInstaller
 {
     public static class ComponentHelper
     {
+        /// <summary>
+        ///     Cleans Installation Files
+        /// </summary>
         public static void CleanupInstallationFiles()
         {
             // installation directory is required to be empty..
@@ -26,6 +29,10 @@ namespace BetterMajorasMaskInstaller
             Directory.Delete(InstallerSettings.InstallDirectory, true);
         }
 
+        /// <summary>
+        ///     Cleans Downloaded Files
+        /// </summary>
+        /// <param name="components"></param>
         public static void CleanupDownloadFiles(InstallerComponents components)
         {
             foreach (InstallerComponent component in components.Components)

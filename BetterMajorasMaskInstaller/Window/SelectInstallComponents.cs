@@ -24,26 +24,20 @@ namespace BetterMajorasMaskInstaller.Window
 {
     public partial class SelectInstallComponents : Form
     {
-        public InstallerComponents InstallerComponents { get; set; }
+        private readonly List<string> _descriptionList = new List<string>();
 
-        private List<string> DescriptionList = new List<string>();
-
-        public SelectInstallComponents(InstallerComponents installerComponents)
+        public SelectInstallComponents()
         {
             InitializeComponent();
 
-            // we sadly need InstallerComponents really early
-            // so we set it here
-            this.InstallerComponents = installerComponents;
-
-            foreach (InstallerComponent component in InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
             {
                 int componentIndex = InstallComponentsList.Items.Add(component.Name, component.Enabled);
 
                 if (component.ReadOnly)
                     InstallComponentsList.SetItemCheckState(componentIndex, CheckState.Indeterminate);
 
-                DescriptionList.Add(component.Description);
+                _descriptionList.Add(component.Description);
             }
         }
 
@@ -52,7 +46,6 @@ namespace BetterMajorasMaskInstaller.Window
             this.Hide();
             new Welcome()
             {
-                InstallerComponents = InstallerComponents,
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location
             }.Show();
@@ -67,7 +60,7 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            foreach (InstallerComponent component in InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
             {
                 // skip the component if it's not the one we need
                 if (component.Name !=
@@ -85,7 +78,7 @@ namespace BetterMajorasMaskInstaller.Window
                 // disable required components
                 foreach (string dComponent in component.DisableOnSelected)
                 {
-                    foreach (InstallerComponent c in InstallerComponents.Components)
+                    foreach (InstallerComponent c in InstallerSettings.InstallerComponents.Components)
                     {
                         // skip if not required
                         if (c.Name != dComponent)
@@ -118,7 +111,7 @@ namespace BetterMajorasMaskInstaller.Window
             Int64 installDiskSpaceRequired = 512;
 
             // calculate disk space required in mb
-            foreach (InstallerComponent component in InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
             {
                 // skip item when it's disabled
                 if (!component.Enabled)
@@ -165,25 +158,27 @@ namespace BetterMajorasMaskInstaller.Window
 
             new DownloadInstallComponents()
             {
-                InstallerComponents = InstallerComponents,
                 StartPosition = FormStartPosition.Manual,
                 Location = this.Location
             }.Show();
         }
 
-        private int ToolTipIndex;
+        private int toolTipIndex;
         private void InstallComponentsList_ShowToolTip(object source, MouseEventArgs args)
         {
             int newIndex = InstallComponentsList.IndexFromPoint(args.Location);
 
-            if (ToolTipIndex == newIndex
+            if (toolTipIndex == newIndex
                 || newIndex == -1)
+            {
                 return;
+            }
 
-            ToolTipIndex = newIndex;
+            toolTipIndex = newIndex;
 
-            InstallerComponentToolTip.SetToolTip(InstallComponentsList, DescriptionList[ToolTipIndex]);
+            InstallerComponentToolTip.SetToolTip(InstallComponentsList, _descriptionList[toolTipIndex]);
         }
+
         private void SelectInstallComponents_Closing(object sender, CancelEventArgs args) => Application.Exit();
     }
 }

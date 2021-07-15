@@ -33,8 +33,8 @@ namespace BetterMajorasMaskInstaller.Window
         {
             InitializeComponent();
         }
+
         public void Welcome_Closing(object sender, CancelEventArgs e) => QuitButton_Click(this, null);
-        public InstallerComponents InstallerComponents { get; set; }
 
         private void CreateShortcut(string path)
         {
@@ -78,7 +78,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             if (TemporaryFilesCheckBox.Checked)
             {
-                ComponentHelper.CleanupDownloadFiles(InstallerComponents);
+                ComponentHelper.CleanupDownloadFiles(InstallerSettings.InstallerComponents);
             }
 
             Application.Exit();

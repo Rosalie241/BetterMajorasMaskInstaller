@@ -24,7 +24,7 @@ namespace BetterMajorasMaskInstaller
     partial class ComponentDownloader
     {
         /// <summary>
-        /// Checks whether URL is a AppVeyor URL (using the 'special' format)
+        ///     Checks whether URL is a AppVeyor URL (using the 'special' format)
         /// </summary>
         private bool IsAppVeyorUrl(string url) => url.StartsWith("appveyor:");
 
@@ -53,14 +53,20 @@ namespace BetterMajorasMaskInstaller
                 Artifact[] artifacts = appVeyor.GetLatestArtifacts();
                 Artifact artifact = null;
 
-                foreach(Artifact a in artifacts)
+                // attempt to find artifact with filename
+                foreach (Artifact a in artifacts)
                 {
                     if (a.FileName.Contains(artifactFileName))
+                    {
                         artifact = a;
+                        break;
+                    }
                 }
 
                 if (artifact == null)
+                {
                     throw new Exception($"Cannot find artifact containing \"{artifactFileName}\" in the filename");
+                }
 
                 UrlInfo info = new UrlInfo()
                 {
@@ -69,7 +75,7 @@ namespace BetterMajorasMaskInstaller
                     Url = artifact.Url
                 };
 
-                // update
+                // update urlInfo
                 urlInfo = info;
             }
 

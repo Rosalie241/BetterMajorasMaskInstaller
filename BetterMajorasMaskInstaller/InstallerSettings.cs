@@ -21,26 +21,30 @@ namespace BetterMajorasMaskInstaller
     public static class InstallerSettings
     {
         /// <summary>
-        /// Install Directory
+        ///     Install Directory
         /// </summary>
         public static string InstallDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "Project64");
 
         /// <summary>
-        /// Download Directory
+        ///     Download Directory
         /// </summary>
         public static string DownloadDirectory = Path.Combine(
                  Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "BetterMajorasMaskInstaller");
         /// <summary>
-        /// Configuration File Url
+        ///     Configuration File Url
         /// </summary>
         public static string ConfigurationUrl = 
             "https://raw.githubusercontent.com/Rosalie241/BetterMajorasMaskInstaller-cfg/master/config.json";
         /// <summary>
-        /// Whether DeveloperMode has been enabled
+        ///     Whether DeveloperMode has been enabled
         /// </summary>
         public static bool DeveloperMode = false;
+        /// <summary>
+        ///     Global Installer Components
+        /// </summary>
+        public static InstallerComponents InstallerComponents { get; set; }
     }
 }

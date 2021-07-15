@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Threading.Tasks;
 using AppVeyorApi;
 
 namespace BetterMajorasMaskInstaller
@@ -28,57 +29,81 @@ namespace BetterMajorasMaskInstaller
     {
         public long BytesReceived { get; set; }
         public int? ProgressPercentage { get; set; }
-        public DownloadStatusChangedEventArgs(long bytesReceived, int? progressPercentage = null)
+        public InstallerComponent CurrentComponent { get; set; }
+        public int CurrentComponentDownloadIndex { get; set; }
+        public DownloadStatusChangedEventArgs(long bytesReceived, int? progressPercentage, 
+                InstallerComponent currentComponent, 
+                int currentComponentDownloadIndex)
         {
             this.BytesReceived = bytesReceived;
             this.ProgressPercentage = progressPercentage;
+            this.CurrentComponent = currentComponent;
+            this.CurrentComponentDownloadIndex = currentComponentDownloadIndex;
         }
     }
 
     partial class ComponentDownloader : IDisposable
     {
-        private static WebClient Client { get; set; }
+        /// <summary>
+        ///     Webclient for class
+        /// </summary>
+        private readonly WebClient _webClient;
 
+        /// <summary>
+        ///     Download Progress Changed event handler
+        /// </summary>
         public DownloadStatusChangedEventHandler OnDownloadProgressChanged { get; set; }
+
         /// <summary>
-        /// whether the download failed
+        ///     Currently Downloading Component
         /// </summary>
-        public bool Failed { get; set; }
+        private InstallerComponent currentComponent { get; set; }
+
         /// <summary>
-        /// When Failed, the exception will be here
+        ///     Current Component Download Index
         /// </summary>
-        public Exception Exception { get; set; }
+        private int currentComponentDownloadIndex { get; set; }
+
         public ComponentDownloader()
         {
             // create WebClient
-            Client = new WebClient();
+            _webClient = new WebClient();
 
             // register event
-            Client.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
+            _webClient.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
             {
-                OnDownloadProgressChanged(source, new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage));
+                OnDownloadProgressChanged(source, new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage, currentComponent, currentComponentDownloadIndex));
             };
         }
 
-        public int ComponentDownloadIndex { get; set; }
-        public InstallerComponent CurrentComponent { get; set; }
         /// <summary>
-        /// Verifies MD5 hash
+        ///     Verifies MD5 hash
         /// </summary>
         private bool VerifyHash(string fileName, string fileHash, long fileSize)
         {
-            if (fileHash == null && fileName == null)
+            // when there's no hash or filename, return false
+            if (fileHash == null && 
+                fileName == null)
+            {
                 return false;
+            }
 
+            // when the file doesn't exist, return false
             if (!File.Exists(fileName))
+            {
                 return false;
+            }
 
             using (MD5 md5 = MD5.Create())
             {
                 using (FileStream fileStream = new FileStream(fileName, FileMode.Open))
                 {
+                    // if there's no hash specified but
+                    // there's a filesize specified, use that
                     if (fileHash == null)
+                    {
                         return fileStream.Length == fileSize;
+                    }
 
                     string md5Hash = BitConverter.ToString(md5.ComputeHash(fileStream))
                         .Replace("-", null)
@@ -89,58 +114,48 @@ namespace BetterMajorasMaskInstaller
             }
         }
         /// <summary>
-        /// Downloads DownloadComponent in directory
+        ///     Downloads DownloadComponent in directory
         /// </summary>
-        public void DownloadComponent(ref InstallerComponent component, string directory, bool fallback)
+        public async Task DownloadComponent(int componentIndex, string directory, bool fallback)
         {
-            Exception = null;
-            Failed = false;
-            ComponentDownloadIndex = -1;
-            CurrentComponent = component;
+            var component = InstallerSettings.InstallerComponents.Components[componentIndex];
+            var urlList = fallback ? component.FallbackUrls : component.Urls;
+
+            // reset global state
+            currentComponent = component;
+            currentComponentDownloadIndex = 0;
 
             // loop over each URL and download it
-            for (int i = 0; i < (fallback ? component.FallbackUrls.Count : component.Urls.Count); i++)
+            for (int i = 0; i < urlList.Count; i++)
             {
-                UrlInfo urlInfo = fallback ? component.FallbackUrls[i] : component.Urls[i];
-                
-                ComponentDownloadIndex++;
+                var urlInfo = urlList[i];
+
+                // update global download index
+                currentComponentDownloadIndex = i;
 
                 // if it's an AppVeyor Url,
                 // use the AppVeyor API to get file information
                 // and change urlInfo according to that
                 if (IsAppVeyorUrl(urlInfo.Url))
                 {
-                    try
-                    {
-                        urlInfo = AppVeyorUrlInfo(urlInfo);
-                    }
-                    catch (Exception e)
-                    {
-                        Exception = e;
-                        Failed = true;
-                        return;
-                    }
+                    urlInfo = AppVeyorUrlInfo(urlInfo);
 
                     // also update the actual InstallerComponent
                     if (fallback)
                     {
-                        component.FallbackUrls[0] = urlInfo;
+                        InstallerSettings.InstallerComponents.Components[componentIndex].FallbackUrls[0] = urlInfo;
                     }
                     else
                     {
-                        component.Urls[0] = urlInfo;
+                        InstallerSettings.InstallerComponents.Components[componentIndex].Urls[0] = urlInfo;
                     }
-                    CurrentComponent = component;
                 }
+
 
                 string url = urlInfo.Url;
-
-                string file = null;
-                if (urlInfo.FileName != null)
-                {
-                    file = Path.Combine(directory, urlInfo.FileName);
-                }
-
+                string file = urlInfo.FileName != null ?
+                            Path.Combine(directory, urlInfo.FileName) :
+                            null;
                 string hash = urlInfo.FileHash;
 
                 // if the hash matches, skip it
@@ -150,46 +165,17 @@ namespace BetterMajorasMaskInstaller
                 }
 
                 // try to download the file using WebClient
-                // also verify the hash when it's done.
-                // since we also want the events to work
-                // we'll download it async
-                // and wait for the WebClient to be done
-                try
+                // and verify the hash to make sure it matches
+                await _webClient.DownloadFileTaskAsync(new Uri(url), file);
+
+                if (!VerifyHash(file, hash, urlInfo.FileSize))
                 {
-                    // since windows 7 is throwing this exception:
-                    // "The request was aborted: Could not create SSL/TLS secure channel."
-                    // we know that it's trying to use a wrong encryption type(possibly tls 1)
-                    // so we'll configure it to use *everything* except tls 1
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
-                    Client.DownloadFileAsync(new Uri(url), file);
-
-                    // we use Thread.Sleep here because
-                    // Thread.Yield has high cpu usage
-                    while (Client.IsBusy)
-                    {
-                        Thread.Sleep(200);
-                    }
-
-                    Failed = !VerifyHash(file, hash, urlInfo.FileSize);
-                }
-                catch (Exception e)
-                {
-                    Exception = e;
-                    Failed = true;
-                }
-
-                // abort when failed
-                if (Failed)
-                {
-                    return;
+                    throw new Exception("VerifyHash returned false!");
                 }
             }
         }
         public void Dispose()
         {
-            Client = null;
-            Exception = null;
             OnDownloadProgressChanged = null;
             GC.SuppressFinalize(this);
         }

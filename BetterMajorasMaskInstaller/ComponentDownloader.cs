@@ -93,6 +93,7 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public void DownloadComponent(ref InstallerComponent component, string directory, bool fallback)
         {
+            Exception = null;
             Failed = false;
             ComponentDownloadIndex = -1;
             CurrentComponent = component;

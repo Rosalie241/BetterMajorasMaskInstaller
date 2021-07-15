@@ -28,6 +28,7 @@ namespace AppVeyorApi
         private string project { get; set; }
         private string branch { get; set; }
         private readonly string apiUrl = "https://ci.appveyor.com/api";
+
         public AppVeyor(string project, string branch = "master")
         {
             this.project = project;
@@ -35,7 +36,7 @@ namespace AppVeyorApi
         }
 
         /// <summary>
-        /// Returns json result from url
+        ///     Returns json result from url
         /// </summary>
         private string getApiData(string url)
         {
@@ -50,7 +51,7 @@ namespace AppVeyorApi
         }
 
         /// <summary>
-        /// Grabs the latest successful build artifacts
+        ///     Grabs the latest successful build artifacts
         /// </summary>
         public Artifact[] GetLatestArtifacts()
         {

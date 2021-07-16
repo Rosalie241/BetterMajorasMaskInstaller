@@ -72,10 +72,9 @@ namespace BetterMajorasMaskInstaller.Window
                 File.WriteAllBytes(sevenZipExecutable, Properties.Resources._7za);
             }
 
-            // store the patches for later
+            // store the additions for later
             // we'll apply them when everything is installed
-            Dictionary<string, KeyValuePair<string, string>> patchList
-                = new Dictionary<string, KeyValuePair<string, string>>();
+            var additionsList = new Dictionary<string, string[]>();
 
             foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
             {
@@ -88,21 +87,12 @@ namespace BetterMajorasMaskInstaller.Window
                 ChangeProgressBarValue(0);
                 Log($"Installing {component.Name}...");
 
-                if (component.Patches != null)
+                // store additions for later
+                if (component.Additions != null)
                 {
-                    // store patches in a dictionary, 
-                    // we're gonna execute them when everything is installed
-                    foreach (KeyValuePair<string, KeyValuePair<string, string>> patch in component.Patches)
+                    foreach (var addition in component.Additions)
                     {
-                        // overwrite key value if already exists
-                        if (patchList.ContainsKey(patch.Key))
-                        {
-                            patchList[patch.Key] = patch.Value;
-                        }
-                        else
-                        {
-                            patchList.Add(patch.Key, patch.Value);
-                        }
+                        additionsList.Add(addition.Key, addition.Value);
                     }
                 }
 
@@ -195,22 +185,19 @@ namespace BetterMajorasMaskInstaller.Window
                 }
             }
 
-            // execute the 'patches'
-            // these 'patches' only allow us to replace text
-            // so just read the file, replace the text and write the file
+            // apply additions
             try
             {
-                foreach (KeyValuePair<string, KeyValuePair<string, string>> patch in patchList)
+                foreach (var addition in additionsList)
                 {
-                    string file = Path.Combine(InstallerSettings.InstallDirectory, patch.Key);
+                    string file = Path.Combine(InstallerSettings.InstallDirectory, addition.Key);
 
-                    File.WriteAllText(file, File.ReadAllText(file)
-                                                .Replace(patch.Value.Key, patch.Value.Value));
+                    File.AppendAllLines(file, addition.Value);
                 }
             }
             catch (Exception e)
             {
-                Log("Patching Failed");
+                Log("Applying Additions Failed");
                 Log(e.Message);
                 Log(e.StackTrace);
                 ComponentHelper.CleanupInstallationFiles();

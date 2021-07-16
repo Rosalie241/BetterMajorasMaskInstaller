@@ -65,8 +65,8 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public Dictionary<string, string> Files { get; set; }
         /// <summary>
-        ///     Patches (file, source text, replacement text)
+        ///     Additions (file, lines)
         /// </summary>
-        public Dictionary<string, KeyValuePair<string, string>> Patches { get; set; }
+        public Dictionary<string, string[]> Additions { get; set; }
     }
 }

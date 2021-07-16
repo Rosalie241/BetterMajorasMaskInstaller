@@ -92,7 +92,16 @@ namespace BetterMajorasMaskInstaller.Window
                 {
                     foreach (var addition in component.Additions)
                     {
-                        additionsList.Add(addition.Key, addition.Value);
+                        if (additionsList.ContainsKey(addition.Key))
+                        { // append to values
+                            var values = additionsList[addition.Key].ToList();
+                            values.AddRange(addition.Value);
+                            additionsList[addition.Key] = values.ToArray();
+                        }
+                        else
+                        { // add to dictionary
+                            additionsList.Add(addition.Key, addition.Value);
+                        }
                     }
                 }
 

@@ -91,6 +91,11 @@ namespace BetterMajorasMaskInstaller.Window
             return average;
         }
 
+        private InstallerComponent EnabledComponents { get; set; }
+        private long TotalDownloadSize { get; set; }
+
+        private Dictionary<UrlInfo, int> componentProgress = new Dictionary<UrlInfo, int>();
+
         private void OnDownloadProgressChanged(object source, DownloadStatusChangedEventArgs a)
         {
             long fileSize = 0;
@@ -102,6 +107,27 @@ namespace BetterMajorasMaskInstaller.Window
             // if it fails for whatever reason, ignore and fallback to given percentage
             try
             {
+                var enabledComponents = InstallerSettings.InstallerComponents.Components.Where(c => c.Enabled);
+
+                componentProgress[a.CurrentComponent.Urls[a.CurrentComponentDownloadIndex]] = (int)a.ProgressPercentage ;
+
+                long percentage = 0;
+                foreach (var component in enabledComponents)
+                {
+                    foreach (var urlInfo in component.Urls)
+                    {
+                        if (componentProgress.ContainsKey(urlInfo))
+                        {
+                            percentage += componentProgress[urlInfo];
+                        }
+                    }
+                }
+
+                percentage = percentage / enabledComponents.Count();
+
+                ChangeProgressBarValue((int)percentage);
+
+                return;
                 // this is rather hacky sadly
                 // since what if i.e part 2 isn't downloaded but part 3 is?
                 // it'll display it incorrectly,
@@ -164,13 +190,53 @@ namespace BetterMajorasMaskInstaller.Window
             }
         }
 
+        private async Task DownloadComponentAsync(ComponentDownloader downloader, InstallerComponent component, int index, bool fallback)
+        {
+            Task downloadTask = null;
+            string taskIdString = "";
+
+            try
+            {
+                downloadTask = downloader.DownloadComponent(index, InstallerSettings.DownloadDirectory, fallback);
+                taskIdString = downloadTask.Id.ToString().PadLeft(4, '0');
+                Log($"[{taskIdString}] Downloading {component.Name}...");
+                await downloadTask;
+            }
+            catch (Exception e)
+            {
+                Log($"[{taskIdString}] Downloading {component.Name} Failed{Environment.NewLine}{e.Message}{Environment.NewLine}{e.StackTrace}");
+
+                if (component.FallbackUrls != null &&
+                    !fallback)
+                {
+                    Log($"[{taskIdString}] Retrying With Fallback...");
+                    downloadTask = DownloadComponentAsync(downloader, component, index, true);
+                    await downloadTask;
+                    return;
+                }
+            }
+
+            // re-throw task exception when needed
+            if (downloadTask.IsFaulted)
+            {
+                throw downloadTask.Exception;
+            }
+            else
+            { // successful download
+                Log($"[{taskIdString}] Finished Downloading {component.Name}...");
+            }
+        }
+
+
         private async Task DownloadAllComponents()
         {
             var downloader = new ComponentDownloader();
             downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
 
             var components = InstallerSettings.InstallerComponents.Components;
+            var downloadTasks = new List<Task>();
 
+        retry:
             for (int i = 0; i < components.Count; i++)
             {
                 InstallerComponent component = components[i];
@@ -181,40 +247,34 @@ namespace BetterMajorasMaskInstaller.Window
                     continue;
                 }
 
-                bool useFallback = false;
-            retry:
-                try
+                var downloadTask = DownloadComponentAsync(downloader, component, i, false);
+                downloadTasks.Add(downloadTask);
+            }
+
+            bool downloadFailed = false;
+
+            while (downloadTasks.Count > 0)
+            {
+                var task = await Task.WhenAny(downloadTasks);
+
+                if (task.IsFaulted)
                 {
-                    ChangeProgressBarValue(0);
-                    Log($"Downloading {component.Name}...");
-
-                    await downloader.DownloadComponent(i, InstallerSettings.DownloadDirectory, useFallback);
+                    downloadFailed = true;
+                    // fall through and wait for other tasks to complete..
                 }
-                catch (Exception e)
+
+                downloadTasks.Remove(task);
+            }
+
+            if (downloadFailed)
+            {
+                DialogResult ret = MessageBox.Show("Download Failed, Try Again?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (ret == DialogResult.Yes)
                 {
-                    Log($"Downloading {component.Name} Failed");
-                    Log(e.Message);
-                    Log(e.StackTrace);
-
-                    if (component.FallbackUrls != null &&
-                        !useFallback)
-                    {
-                        Log("Retrying With Fallback...");
-                        useFallback = true;
-                        goto retry;
-                    }
-
-                    // ask the user if they want to retry
-                    DialogResult ret = MessageBox.Show("Download Failed, Try Again?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                    if (ret == DialogResult.Yes)
-                    {
-                        useFallback = false;
-                        goto retry;
-                    }
-
-                    // early exit
-                    return;
+                    goto retry;
                 }
+
+                return;
             }
 
             Log("Downloading completed");

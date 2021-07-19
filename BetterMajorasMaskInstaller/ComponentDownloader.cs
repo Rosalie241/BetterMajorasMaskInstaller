@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -45,35 +46,12 @@ namespace BetterMajorasMaskInstaller
     partial class ComponentDownloader : IDisposable
     {
         /// <summary>
-        ///     Webclient for class
-        /// </summary>
-        private readonly WebClient _webClient;
-
-        /// <summary>
         ///     Download Progress Changed event handler
         /// </summary>
         public DownloadStatusChangedEventHandler OnDownloadProgressChanged { get; set; }
 
-        /// <summary>
-        ///     Currently Downloading Component
-        /// </summary>
-        private InstallerComponent currentComponent { get; set; }
-
-        /// <summary>
-        ///     Current Component Download Index
-        /// </summary>
-        private int currentComponentDownloadIndex { get; set; }
-
         public ComponentDownloader()
         {
-            // create WebClient
-            _webClient = new WebClient();
-
-            // register event
-            _webClient.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
-            {
-                OnDownloadProgressChanged(source, new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage, currentComponent, currentComponentDownloadIndex));
-            };
         }
 
         /// <summary>
@@ -113,6 +91,47 @@ namespace BetterMajorasMaskInstaller
                 }
             }
         }
+
+        private async Task DownloadUrlInfo(WebClient webClient, UrlInfo urlInfo, int componentIndex, bool fallback, string directory)
+        {
+            // if it's an AppVeyor Url,
+            // use the AppVeyor API to get file information
+            // and change urlInfo according to that
+            if (IsAppVeyorUrl(urlInfo.Url))
+            {
+                urlInfo = AppVeyorUrlInfo(urlInfo);
+
+                // also update the actual InstallerComponent
+                if (fallback)
+                {
+                    InstallerSettings.InstallerComponents.Components[componentIndex].FallbackUrls[0] = urlInfo;
+                }
+                else
+                {
+                    InstallerSettings.InstallerComponents.Components[componentIndex].Urls[0] = urlInfo;
+                }
+            }
+
+            string url = urlInfo.Url;
+            string file = urlInfo.FileName != null ?
+                        Path.Combine(directory, urlInfo.FileName) :
+                        null;
+            string hash = urlInfo.FileHash;
+
+            // if the hash doesn't match, download file
+            if (!VerifyHash(file, hash, urlInfo.FileSize))
+            {
+                // try to download the file using WebClient
+                // and verify the hash to make sure it matches
+                await webClient.DownloadFileTaskAsync(new Uri(url), file);
+
+                if (!VerifyHash(file, hash, urlInfo.FileSize))
+                {
+                    throw new Exception("VerifyHash returned false!");
+                }
+            }
+        }
+
         /// <summary>
         ///     Downloads DownloadComponent in directory
         /// </summary>
@@ -120,58 +139,40 @@ namespace BetterMajorasMaskInstaller
         {
             var component = InstallerSettings.InstallerComponents.Components[componentIndex];
             var urlList = fallback ? component.FallbackUrls : component.Urls;
-
-            // reset global state
-            currentComponent = component;
-            currentComponentDownloadIndex = 0;
+            var downloadTasks = new List<Task>();
 
             // loop over each URL and download it
             for (int i = 0; i < urlList.Count; i++)
             {
                 var urlInfo = urlList[i];
 
-                // update global download index
-                currentComponentDownloadIndex = i;
-
-                // if it's an AppVeyor Url,
-                // use the AppVeyor API to get file information
-                // and change urlInfo according to that
-                if (IsAppVeyorUrl(urlInfo.Url))
+                // create new webClient for each task
+                var webClient = new WebClient();
+                webClient.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
                 {
-                    urlInfo = AppVeyorUrlInfo(urlInfo);
+                    OnDownloadProgressChanged(source,
+                        new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage,
+                                                            component, i));
+                };
 
-                    // also update the actual InstallerComponent
-                    if (fallback)
-                    {
-                        InstallerSettings.InstallerComponents.Components[componentIndex].FallbackUrls[0] = urlInfo;
-                    }
-                    else
-                    {
-                        InstallerSettings.InstallerComponents.Components[componentIndex].Urls[0] = urlInfo;
-                    }
+                var downloadTask = DownloadUrlInfo(webClient, urlInfo, i, fallback, directory);
+                downloadTasks.Add(downloadTask);
+
+                // add a small delay to not spam the servers too much...
+                await Task.Delay(200);
+            }
+
+            while (downloadTasks.Count > 0)
+            {
+                var task = await Task.WhenAny(downloadTasks);
+
+                // re-throw exception
+                if (task.IsFaulted)
+                {
+                    throw task.Exception;
                 }
 
-
-                string url = urlInfo.Url;
-                string file = urlInfo.FileName != null ?
-                            Path.Combine(directory, urlInfo.FileName) :
-                            null;
-                string hash = urlInfo.FileHash;
-
-                // if the hash matches, skip it
-                if (VerifyHash(file, hash, urlInfo.FileSize))
-                {
-                    continue;
-                }
-
-                // try to download the file using WebClient
-                // and verify the hash to make sure it matches
-                await _webClient.DownloadFileTaskAsync(new Uri(url), file);
-
-                if (!VerifyHash(file, hash, urlInfo.FileSize))
-                {
-                    throw new Exception("VerifyHash returned false!");
-                }
+                downloadTasks.Remove(task);
             }
         }
         public void Dispose()

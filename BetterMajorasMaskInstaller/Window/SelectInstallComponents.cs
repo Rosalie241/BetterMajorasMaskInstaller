@@ -131,25 +131,26 @@ namespace BetterMajorasMaskInstaller.Window
             // if it's the same drive, download + install size
             if (downloadDriveInfo.Name == installDriveInfo.Name)
             {
-                if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= (downloadDiskSpaceRequired + installDiskSpaceRequired))
+                long diskSpaceRequired = downloadDiskSpaceRequired + installDiskSpaceRequired;
+                if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= diskSpaceRequired)
                 {
-                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Not enough free disk space! {diskSpaceRequired} MiB required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
             else
             {
-                // verify download directory drive in mb
+                // verify download directory drive in MiB
                 if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
                 {
-                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Not enough free disk space! {downloadDiskSpaceRequired} MiB for download directory drive required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // verify install directory drive in mb
+                // verify install directory drive in MiB
                 if ((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
                 {
-                    MessageBox.Show("Not enough free disk space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Not enough free disk space! {installDiskSpaceRequired} MiB for installation directory drive required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }

@@ -92,7 +92,7 @@ namespace BetterMajorasMaskInstaller
             }
         }
 
-        private async Task DownloadUrlInfo(WebClient webClient, UrlInfo urlInfo, int componentIndex, bool fallback, string directory)
+        private async Task DownloadUrlInfo(WebClient webClient, UrlInfo urlInfo, int componentIndex, int urlInfoIndex, bool fallback, string directory)
         {
             // if it's an AppVeyor Url,
             // use the AppVeyor API to get file information
@@ -130,6 +130,9 @@ namespace BetterMajorasMaskInstaller
                     throw new Exception("VerifyHash returned false!");
                 }
             }
+
+            // fire 'finished' event
+            OnDownloadProgressChanged(this, new DownloadStatusChangedEventArgs(urlInfo.FileSize, 100, InstallerSettings.InstallerComponents.Components[componentIndex], urlInfoIndex));
         }
 
         /// <summary>
@@ -145,17 +148,17 @@ namespace BetterMajorasMaskInstaller
             for (int i = 0; i < urlList.Count; i++)
             {
                 var urlInfo = urlList[i];
-
+                int currentIndex = i;
                 // create new webClient for each task
                 var webClient = new WebClient();
                 webClient.DownloadProgressChanged += (object source, DownloadProgressChangedEventArgs args) =>
                 {
                     OnDownloadProgressChanged(source,
                         new DownloadStatusChangedEventArgs(args.BytesReceived, args.ProgressPercentage,
-                                                            component, i));
+                                                            component, currentIndex));
                 };
 
-                var downloadTask = DownloadUrlInfo(webClient, urlInfo, i, fallback, directory);
+                var downloadTask = DownloadUrlInfo(webClient, urlInfo, componentIndex, i, fallback, directory);
                 downloadTasks.Add(downloadTask);
 
                 // add a small delay to not spam the servers too much...
@@ -169,7 +172,7 @@ namespace BetterMajorasMaskInstaller
                 // re-throw exception
                 if (task.IsFaulted)
                 {
-                    throw task.Exception;
+                    task.Exception.Handle(e => throw e);
                 }
 
                 downloadTasks.Remove(task);

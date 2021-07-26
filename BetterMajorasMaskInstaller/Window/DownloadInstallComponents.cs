@@ -36,26 +36,13 @@ namespace BetterMajorasMaskInstaller.Window
         //
         // Thanks to Jaxon on Discord for this code <3
         //
-        Queue<long> downloadQueue = new Queue<long>();
+        private Queue<double> downloadQueue = new Queue<double>();
         private Stopwatch downloadStopWatch = new Stopwatch();
-        private long oldAverage = -1;
-        private long previousTotal = -1;
-        private InstallerComponent oldComponent;
-        private long GetAverageDownloadSpeed(long currentTotal, InstallerComponent currentComponent)
+        private double oldAverage = -1;
+        private double previousTotal = -1;
+
+        private long GetAverageDownloadSpeed(long currentValue)
         {
-            // if we're at a different component,
-            // reset everything
-            if (currentComponent != oldComponent)
-            {
-                downloadQueue.Clear();
-                oldComponent = currentComponent;
-                downloadStopWatch.Restart();
-                previousTotal = -1;
-                oldAverage = -1;
-
-                return oldAverage;
-            }
-
             if (!downloadStopWatch.IsRunning)
             {
                 downloadStopWatch.Start();
@@ -63,7 +50,7 @@ namespace BetterMajorasMaskInstaller.Window
 
             if (downloadStopWatch.ElapsedMilliseconds < 1000)
             {
-                return oldAverage;
+                return (long)oldAverage;
             }
 
             if (downloadQueue.Count >= 20)
@@ -73,34 +60,27 @@ namespace BetterMajorasMaskInstaller.Window
 
             if (previousTotal == -1)
             {
-                previousTotal = currentTotal;
+                previousTotal = currentValue;
 
-                return oldAverage;
+                return (long)oldAverage;
             }
 
             // Enqueue average download speed since last average was enqueued
-            downloadQueue.Enqueue((long)((currentTotal - previousTotal) / downloadStopWatch.Elapsed.TotalSeconds));
-            previousTotal = currentTotal;
+            downloadQueue.Enqueue(((currentValue - previousTotal) / downloadStopWatch.Elapsed.TotalSeconds));
+            previousTotal = currentValue;
 
             // Total average for component is the average of average download speeds
-            long average = downloadQueue.Sum() / downloadQueue.Count;
+            double average = downloadQueue.Sum() / downloadQueue.Count;
 
             oldAverage = average;
             downloadStopWatch.Restart();
 
-            return average;
+            return (long)average;
         }
 
-        private InstallerComponent EnabledComponents { get; set; }
-        private long TotalDownloadSize { get; set; }
-
-        private Dictionary<UrlInfo, int> componentProgress = new Dictionary<UrlInfo, int>();
-
+        private Dictionary<UrlInfo, long> componentProgress = new Dictionary<UrlInfo, long>();
         private void OnDownloadProgressChanged(object source, DownloadStatusChangedEventArgs a)
         {
-            long fileSize = 0;
-            long bytesReceived = a.BytesReceived;
-
             // get total filesize of *all* the files of the InstallComponent
             // then get the total download progress instead of the progress per file
             // and change the progressbar
@@ -108,32 +88,37 @@ namespace BetterMajorasMaskInstaller.Window
             try
             {
                 var enabledComponents = InstallerSettings.InstallerComponents.Components.Where(c => c.Enabled);
-
-                componentProgress[a.CurrentComponent.Urls[a.CurrentComponentDownloadIndex]] = (int)a.ProgressPercentage ;
-
-                long percentage = 0;
-                foreach (var component in enabledComponents)
+                var currentUrlInfo = a.CurrentComponent.Urls[a.CurrentComponentDownloadIndex];
+                var totalDownloadSize = enabledComponents.Select(c =>
                 {
-                    foreach (var urlInfo in component.Urls)
-                    {
-                        if (componentProgress.ContainsKey(urlInfo))
-                        {
-                            percentage += componentProgress[urlInfo];
-                        }
-                    }
+                    // use fallback urls if needed
+                    if (c.Urls[a.CurrentComponentDownloadIndex].FileSize == 0 && c.FallbackUrls != null)
+                        return c.FallbackUrls.Select(u => u.FileSize).Sum();
+
+                    return c.Urls.Select(u => u.FileSize).Sum();
+                }).Sum();
+
+                if (!componentProgress.ContainsKey(currentUrlInfo) ||
+                    (componentProgress.ContainsKey(currentUrlInfo) &&
+                    componentProgress[currentUrlInfo] < a.BytesReceived))
+                {
+                    componentProgress[currentUrlInfo] = a.BytesReceived;
                 }
 
-                percentage = percentage / enabledComponents.Count();
+                long totalBytesReceived = componentProgress.Values.Sum();
+                int percentage = (int)((double)(totalBytesReceived / (double)totalDownloadSize) * 100);
 
-                ChangeProgressBarValue((int)percentage);
+                ChangeProgressBarValue(percentage);
+                ChangeProgressLabel($"{(totalBytesReceived / 1024 / 1024)} MiB / {(totalDownloadSize / 1024 / 1024)} MiB @ {GetAverageDownloadSpeed((totalBytesReceived / 1024))} KiB/s");
 
                 return;
+
                 // this is rather hacky sadly
                 // since what if i.e part 2 isn't downloaded but part 3 is?
                 // it'll display it incorrectly,
                 // we don't care for now
                 // since users wont touch the files (I hope..)
-                for (int i = 0; i < a.CurrentComponentDownloadIndex; i++)
+                /*for (int i = 0; i < a.CurrentComponentDownloadIndex; i++)
                 {
                     bytesReceived += a.CurrentComponent.Urls[i].FileSize;
                 }
@@ -152,7 +137,8 @@ namespace BetterMajorasMaskInstaller.Window
                 int fileSizeInMegaBytes = (int)(fileSize / 1024 / 1024);
 
                 ChangeProgressBarValue(megaBytesReceived, fileSizeInMegaBytes);
-                ChangeProgressLabel($"{megaBytesReceived} MiB / {fileSizeInMegaBytes} MiB @ {GetAverageDownloadSpeed((bytesReceived / 1024), a.CurrentComponent)} KiB/s");
+                // ChangeProgressLabel($"{megaBytesReceived} MiB / {fileSizeInMegaBytes} MiB @ {GetAverageDownloadSpeed((bytesReceived / 1024), a.CurrentComponent)} KiB/s");
+                */
             }
             catch (Exception)
             {
@@ -271,14 +257,15 @@ namespace BetterMajorasMaskInstaller.Window
                 DialogResult ret = MessageBox.Show("Download Failed, Try Again?", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                 if (ret == DialogResult.Yes)
                 {
+                    // reset download progress
+                    componentProgress.Clear();
                     goto retry;
                 }
 
                 return;
             }
 
-            Log("Downloading completed");
-            LaunchInstallComponents();
+            //LaunchInstallComponents();
         }
 
         private void LaunchInstallComponents()

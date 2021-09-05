@@ -134,7 +134,7 @@ namespace BetterMajorasMaskInstaller.Window
                 long diskSpaceRequired = downloadDiskSpaceRequired + installDiskSpaceRequired;
                 if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= diskSpaceRequired)
                 {
-                    MessageBox.Show($"Not enough free disk space! {diskSpaceRequired} MiB required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Not enough free disk space!\n{(diskSpaceRequired / 1024) + 2} GB free disk space in {downloadDriveInfo.Name} required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -143,14 +143,14 @@ namespace BetterMajorasMaskInstaller.Window
                 // verify download directory drive in MiB
                 if ((downloadDriveInfo.AvailableFreeSpace / 1024 / 1024) <= downloadDiskSpaceRequired)
                 {
-                    MessageBox.Show($"Not enough free disk space! {downloadDiskSpaceRequired} MiB for download directory drive required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Not enough free disk space!\n{(downloadDiskSpaceRequired / 1024) + 2} GB for {downloadDriveInfo.Name} drive required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 // verify install directory drive in MiB
                 if ((installDriveInfo.AvailableFreeSpace / 1024 / 1024) <= installDiskSpaceRequired)
                 {
-                    MessageBox.Show($"Not enough free disk space! {installDiskSpaceRequired} MiB for installation directory drive required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Not enough free disk space!\n{(installDiskSpaceRequired / 1024) + 2} GB for {installDriveInfo.Name} drive required!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }

@@ -118,7 +118,7 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public async Task DownloadComponent(int componentIndex, string directory, bool fallback)
         {
-            var component = InstallerSettings.InstallerComponents.Components[componentIndex];
+            var component = InstallerSettings.InstallerConfiguration.Components[componentIndex];
             var urlList = fallback ? component.FallbackUrls : component.Urls;
 
             // reset global state
@@ -143,11 +143,11 @@ namespace BetterMajorasMaskInstaller
                     // also update the actual InstallerComponent
                     if (fallback)
                     {
-                        InstallerSettings.InstallerComponents.Components[componentIndex].FallbackUrls[0] = urlInfo;
+                        InstallerSettings.InstallerConfiguration.Components[componentIndex].FallbackUrls[0] = urlInfo;
                     }
                     else
                     {
-                        InstallerSettings.InstallerComponents.Components[componentIndex].Urls[0] = urlInfo;
+                        InstallerSettings.InstallerConfiguration.Components[componentIndex].Urls[0] = urlInfo;
                     }
                 }
 

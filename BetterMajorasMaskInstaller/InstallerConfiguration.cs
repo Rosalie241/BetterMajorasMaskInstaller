@@ -17,8 +17,15 @@ using System.Collections.Generic;
 
 namespace BetterMajorasMaskInstaller
 {
-    public class InstallerComponents
+    public class InstallerConfiguration
     {
+        /// <summary>
+        ///     Shortcut Information
+        /// </summary>
+        public ShortcutInfo ShortcutInfo { get; set; }
+        /// <summary>
+        ///     Installer Components
+        /// </summary>
         public List<InstallerComponent> Components { get; set; }
     }
 }

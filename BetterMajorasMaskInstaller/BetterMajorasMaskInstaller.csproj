@@ -63,11 +63,12 @@
     <Compile Include="ComponentDownloader.Appveyor.cs" />
     <Compile Include="ComponentHelper.cs" />
     <Compile Include="InstallerComponent.cs" />
-    <Compile Include="InstallerComponents.cs" />
+    <Compile Include="InstallerConfiguration.cs" />
     <Compile Include="InstallerSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentDownloader.cs" />
+    <Compile Include="ShortcutInfo.cs" />
     <Compile Include="UrlInfo.cs" />
     <Compile Include="Window\Completed.cs">
       <SubType>Form</SubType>

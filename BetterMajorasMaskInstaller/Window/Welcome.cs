@@ -71,16 +71,16 @@ namespace BetterMajorasMaskInstaller.Window
             try
             {
 #endif
-            if (InstallerSettings.InstallerComponents == null || InstallerSettings.DeveloperMode)
+            if (InstallerSettings.InstallerConfiguration == null || InstallerSettings.DeveloperMode)
             {
-                InstallerSettings.InstallerComponents = JsonConvert.DeserializeObject<InstallerComponents>(
+                InstallerSettings.InstallerConfiguration = JsonConvert.DeserializeObject<InstallerConfiguration>(
                                                             new WebClient().DownloadString(
                                                                 InstallerSettings.ConfigurationUrl
                                                         ));
 
                 if (DumpConfigFileCheckBox.Checked)
                 {
-                    File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerSettings.InstallerComponents, Formatting.Indented));
+                    File.WriteAllText("config.json", JsonConvert.SerializeObject(InstallerSettings.InstallerConfiguration, Formatting.Indented));
                 }
             }
 #if !DEBUG

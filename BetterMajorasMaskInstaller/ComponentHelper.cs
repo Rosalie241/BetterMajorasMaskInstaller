@@ -39,7 +39,7 @@ namespace BetterMajorasMaskInstaller
         ///     Cleans Downloaded Files
         /// </summary>
         /// <param name="components"></param>
-        public static void CleanupDownloadFiles(InstallerComponents components)
+        public static void CleanupDownloadFiles(InstallerConfiguration components)
         {
             foreach (InstallerComponent component in components.Components)
             {

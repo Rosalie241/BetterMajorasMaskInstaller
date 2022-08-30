@@ -169,7 +169,7 @@ namespace BetterMajorasMaskInstaller.Window
             var downloader = new ComponentDownloader();
             downloader.OnDownloadProgressChanged += OnDownloadProgressChanged;
 
-            var components = InstallerSettings.InstallerComponents.Components;
+            var components = InstallerSettings.InstallerConfiguration.Components;
 
             for (int i = 0; i < components.Count; i++)
             {

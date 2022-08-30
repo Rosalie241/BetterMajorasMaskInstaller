@@ -40,14 +40,14 @@ namespace BetterMajorasMaskInstaller.Window
         {
             IWshShortcut shortcut = (IWshShortcut)new WshShell().CreateShortcut(path);
 
-            shortcut.Description = "Project64 installed by BetterMajorasMaskInstaller";
+            shortcut.Description = InstallerSettings.InstallerConfiguration.ShortcutInfo.Description;
             shortcut.TargetPath = Path.Combine(
                 InstallerSettings.InstallDirectory,
-                "PJ64Launcher.exe");
+                InstallerSettings.InstallerConfiguration.ShortcutInfo.Executable);
 
             shortcut.IconLocation = Path.Combine(
                 InstallerSettings.InstallDirectory,
-                "Project64.exe");
+                InstallerSettings.InstallerConfiguration.ShortcutInfo.IconLocation);
 
             shortcut.WorkingDirectory = InstallerSettings.InstallDirectory;
 
@@ -63,7 +63,7 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 CreateShortcut(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    "Project64 HD.lnk")
+                    InstallerSettings.InstallerConfiguration.ShortcutInfo.FileName)
                 );
             }
 
@@ -72,13 +72,13 @@ namespace BetterMajorasMaskInstaller.Window
             {
                 CreateShortcut(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
-                    "Project64 HD.lnk")
+                    InstallerSettings.InstallerConfiguration.ShortcutInfo.FileName)
                 );
             }
 
             if (TemporaryFilesCheckBox.Checked)
             {
-                ComponentHelper.CleanupDownloadFiles(InstallerSettings.InstallerComponents);
+                ComponentHelper.CleanupDownloadFiles(InstallerSettings.InstallerConfiguration);
             }
 
             Application.Exit();

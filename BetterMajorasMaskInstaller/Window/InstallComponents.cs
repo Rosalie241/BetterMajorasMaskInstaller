@@ -76,7 +76,7 @@ namespace BetterMajorasMaskInstaller.Window
             // we'll apply them when everything is installed
             var additionsList = new Dictionary<string, string[]>();
 
-            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerConfiguration.Components)
             {
                 // skip when component is disabled
                 if (!component.Enabled)

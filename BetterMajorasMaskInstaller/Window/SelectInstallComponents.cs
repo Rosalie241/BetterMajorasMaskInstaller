@@ -30,7 +30,7 @@ namespace BetterMajorasMaskInstaller.Window
         {
             InitializeComponent();
 
-            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerConfiguration.Components)
             {
                 int componentIndex = InstallComponentsList.Items.Add(component.Name, component.Enabled);
 
@@ -60,7 +60,7 @@ namespace BetterMajorasMaskInstaller.Window
                 return;
             }
 
-            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerConfiguration.Components)
             {
                 // skip the component if it's not the one we need
                 if (component.Name !=
@@ -78,7 +78,7 @@ namespace BetterMajorasMaskInstaller.Window
                 // disable required components
                 foreach (string dComponent in component.DisableOnSelected)
                 {
-                    foreach (InstallerComponent c in InstallerSettings.InstallerComponents.Components)
+                    foreach (InstallerComponent c in InstallerSettings.InstallerConfiguration.Components)
                     {
                         // skip if not required
                         if (c.Name != dComponent)
@@ -111,7 +111,7 @@ namespace BetterMajorasMaskInstaller.Window
             Int64 installDiskSpaceRequired = 512;
 
             // calculate disk space required in mb
-            foreach (InstallerComponent component in InstallerSettings.InstallerComponents.Components)
+            foreach (InstallerComponent component in InstallerSettings.InstallerConfiguration.Components)
             {
                 // skip item when it's disabled
                 if (!component.Enabled)

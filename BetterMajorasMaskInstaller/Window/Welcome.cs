@@ -32,6 +32,7 @@ namespace BetterMajorasMaskInstaller.Window
             DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory;
             ConfigurationUrlTextBox.Text = InstallerSettings.ConfigurationUrl;
             DeveloperModeCheckBox.Checked = InstallerSettings.DeveloperMode;
+            CleanupInstallationFilesOnFailureCheckBox.Checked = InstallerSettings.CleanupInstallationFilesOnFailure;
         }
 
         private void QuitButton_Click(object sender, EventArgs e) => Application.Exit();
@@ -270,6 +271,12 @@ namespace BetterMajorasMaskInstaller.Window
             ConfigurationUrlTextBox.Visible = visible;
             ConfigurationUrlLabel.Visible = visible;
             DumpConfigFileCheckBox.Visible = visible;
+            CleanupInstallationFilesOnFailureCheckBox.Visible = visible;
+        }
+
+        private void CleanupInstallationFilesOnFailureCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            InstallerSettings.CleanupInstallationFilesOnFailure = CleanupInstallationFilesOnFailureCheckBox.Checked;
         }
     }
 }

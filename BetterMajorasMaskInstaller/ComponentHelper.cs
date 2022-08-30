@@ -24,6 +24,12 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public static void CleanupInstallationFiles()
         {
+            // developer mode option
+            if (!InstallerSettings.CleanupInstallationFilesOnFailure)
+            {
+                return;
+            }
+
             // installation directory is required to be empty..
             // so we can wipe it safely (hopefully)
             Directory.Delete(InstallerSettings.InstallDirectory, true);

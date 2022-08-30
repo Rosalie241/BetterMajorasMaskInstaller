@@ -43,6 +43,10 @@ namespace BetterMajorasMaskInstaller
         /// </summary>
         public static bool DeveloperMode = false;
         /// <summary>
+        ///     Whether to cleanup installation files on failure
+        /// </summary>
+        public static bool CleanupInstallationFilesOnFailure = true;
+        /// <summary>
         ///     Global Installer Components
         /// </summary>
         public static InstallerComponents InstallerComponents { get; set; }

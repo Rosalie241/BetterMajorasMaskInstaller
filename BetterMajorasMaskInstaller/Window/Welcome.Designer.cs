@@ -40,6 +40,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.ConfigurationUrlLabel = new System.Windows.Forms.Label();
             this.DumpConfigFileCheckBox = new System.Windows.Forms.CheckBox();
+            this.CleanupInstallationFilesOnFailureCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // ContinueButton
@@ -155,12 +156,25 @@
             this.DumpConfigFileCheckBox.UseVisualStyleBackColor = true;
             this.DumpConfigFileCheckBox.Visible = false;
             // 
+            // CleanupInstallationFilesOnFailureCheckBox
+            // 
+            this.CleanupInstallationFilesOnFailureCheckBox.AutoSize = true;
+            this.CleanupInstallationFilesOnFailureCheckBox.Location = new System.Drawing.Point(11, 150);
+            this.CleanupInstallationFilesOnFailureCheckBox.Name = "CleanupInstallationFilesOnFailureCheckBox";
+            this.CleanupInstallationFilesOnFailureCheckBox.Size = new System.Drawing.Size(193, 17);
+            this.CleanupInstallationFilesOnFailureCheckBox.TabIndex = 12;
+            this.CleanupInstallationFilesOnFailureCheckBox.Text = "Cleanup Installation Files On Failure";
+            this.CleanupInstallationFilesOnFailureCheckBox.UseVisualStyleBackColor = true;
+            this.CleanupInstallationFilesOnFailureCheckBox.Visible = false;
+            this.CleanupInstallationFilesOnFailureCheckBox.CheckedChanged += new System.EventHandler(this.CleanupInstallationFilesOnFailureCheckBox_CheckedChanged);
+            // 
             // Welcome
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(444, 361);
+            this.Controls.Add(this.CleanupInstallationFilesOnFailureCheckBox);
             this.Controls.Add(this.DumpConfigFileCheckBox);
             this.Controls.Add(this.ConfigurationUrlLabel);
             this.Controls.Add(this.label2);
@@ -200,5 +214,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label ConfigurationUrlLabel;
         private System.Windows.Forms.CheckBox DumpConfigFileCheckBox;
+        private System.Windows.Forms.CheckBox CleanupInstallationFilesOnFailureCheckBox;
     }
 }

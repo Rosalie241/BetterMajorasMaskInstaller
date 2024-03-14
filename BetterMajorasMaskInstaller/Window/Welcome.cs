@@ -19,6 +19,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
+using WK.Libraries.BetterFolderBrowserNS;
 
 namespace BetterMajorasMaskInstaller.Window
 {
@@ -186,82 +187,87 @@ namespace BetterMajorasMaskInstaller.Window
             }
         }
 
+
         private void ChangeInstallDirectoryButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog
-            {
-                ShowNewFolderButton = true,
-                Description = "Project64 Install Directory"
-            };
+            var betterFolderBrowser = new BetterFolderBrowser();
 
-            // return when cancelled
-            if (dialog.ShowDialog() != DialogResult.OK)
+            betterFolderBrowser.Title = "Project64 Install Directory";
+            betterFolderBrowser.RootFolder = "C:\\"; // Adjust the root folder as needed
+
+            // Allow multi-selection of folders.
+            betterFolderBrowser.Multiselect = false; // Adjust according to your needs
+
+            // If you'd prefer blocking the main UI thread when calling the dialog,
+            // specify the window owner of the dialog using the ShowDialog(IWin32Window) method:
+            if (betterFolderBrowser.ShowDialog(this) == DialogResult.OK)
             {
-                return;
+                string selectedFolder = betterFolderBrowser.SelectedFolder;
+
+                // make sure selected path isn't nothing
+                if (String.IsNullOrEmpty(selectedFolder))
+                {
+                    return;
+                }
+
+                // make sure we have access to the directory
+                if (!IsDirectoryAccessible(selectedFolder))
+                {
+                    MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // make sure download & install directory aren't the same
+                if (selectedFolder == InstallerSettings.DownloadDirectory)
+                {
+                    DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory
+                        = Path.Combine(InstallerSettings.DownloadDirectory,
+                        "temporary_download_cache");
+                    Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
+                }
+
+                InstallDirectoryTextBox.Text = InstallerSettings.InstallDirectory = selectedFolder;
             }
-
-            // make sure selected path isn't nothing
-            if (String.IsNullOrEmpty(dialog.SelectedPath))
-            {
-                return;
-            }
-
-            // make sure we have access to the directory
-            if (!IsDirectoryAccessible(dialog.SelectedPath))
-            {
-                MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            // make sure download & install directory aren't the same
-            if (dialog.SelectedPath == InstallerSettings.DownloadDirectory)
-            {
-                DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory
-                    = Path.Combine(InstallerSettings.DownloadDirectory,
-                    "temporary_download_cache");
-                Directory.CreateDirectory(InstallerSettings.DownloadDirectory);
-            }
-
-            InstallDirectoryTextBox.Text =
-                InstallerSettings.InstallDirectory = dialog.SelectedPath;
         }
 
         private void ChangeDownloadDirectoryButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog()
-            {
-                ShowNewFolderButton = true,
-                Description = "Temporary Download Directory"
-            };
+            var betterFolderBrowser = new BetterFolderBrowser();
 
-            // return when cancelled
-            if (dialog.ShowDialog() != DialogResult.OK)
+            betterFolderBrowser.Title = "Temporary Download Directory";
+            betterFolderBrowser.RootFolder = "C:\\"; // Adjust the root folder as needed
+
+            // Allow multi-selection of folders.
+            betterFolderBrowser.Multiselect = false; // Adjust according to your needs
+
+            // If you'd prefer blocking the main UI thread when calling the dialog,
+            // specify the window owner of the dialog using the ShowDialog(IWin32Window) method:
+            if (betterFolderBrowser.ShowDialog(this) == DialogResult.OK)
             {
-                return;
+                string selectedFolder = betterFolderBrowser.SelectedFolder;
+
+                // make sure selected path isn't nothing
+                if (String.IsNullOrEmpty(selectedFolder))
+                {
+                    return;
+                }
+
+                // make sure download & install directory aren't the same
+                if (selectedFolder == InstallerSettings.InstallDirectory)
+                {
+                    selectedFolder = Path.Combine(selectedFolder, "temporary_download_cache");
+                    Directory.CreateDirectory(selectedFolder);
+                }
+
+                // make sure we have access to the directory
+                if (!IsDirectoryAccessible(selectedFolder))
+                {
+                    MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                DownloadDirectoryTextBox.Text = InstallerSettings.DownloadDirectory = selectedFolder;
             }
-
-            // make sure selected path isn't nothing
-            if (String.IsNullOrEmpty(dialog.SelectedPath))
-            {
-                return;
-            }
-
-            // make sure download & install directory aren't the same
-            if (dialog.SelectedPath == InstallerSettings.InstallDirectory)
-            {
-                dialog.SelectedPath = Path.Combine(dialog.SelectedPath, "temporary_download_cache");
-                Directory.CreateDirectory(dialog.SelectedPath);
-            }
-
-            // make sure we have access to the directory
-            if (!IsDirectoryAccessible(dialog.SelectedPath))
-            {
-                MessageBox.Show("Unable to open directory!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            DownloadDirectoryTextBox.Text =
-                InstallerSettings.DownloadDirectory = dialog.SelectedPath;
         }
 
         private void DeveloperModeCheckBox_CheckedChanged(object sender, EventArgs e)

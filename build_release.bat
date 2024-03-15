@@ -2,10 +2,13 @@
 
 mkdir bin
 :: clean, build and merge dlls
-msbuild /t:Clean /t:Build /t:ILMerge ^
+cd "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin"
+MSBuild.exe /t:Clean /t:Build /t:ILMerge ^
 	/p:Configuration=Release ^
 	/p:AllowedReferenceRelatedFileExtensions=none ^
-	BetterMajorasMaskInstaller\BetterMajorasMaskInstaller.csproj
-
+	%UserProfile%\source\repos\BetterMajorasMaskInstaller\BetterMajorasMaskInstaller\BetterMajorasMaskInstaller.csproj
+pause
 :: Generate MD5 Hash
-CertUtil -hashfile bin\BetterMajorasMaskInstaller.exe MD5
+cd "C:\Windows\System32"
+CertUtil.exe -hashfile %UserProfile%\source\repos\BetterMajorasMaskInstaller\bin\BetterMajorasMaskInstaller.exe MD5
+pause
